@@ -1,28 +1,41 @@
+import './App.css'
+
 function App() {
   return (
-    <div>
-      <h1>FlowSG</h1>
-      <p>Your smart commuter companion</p>
+    <div className="app">
 
-      <h2>Good morning, Rachel 👋</h2>
+      <header className="header">
+        <div className="logo">FlowSG</div>
+      </header>
 
-      <input
-        type="text"
-        placeholder="Where are you going?"
-      />
+      <section className="greeting">
+        <h2>Good morning, Rachel 👋</h2>
+        <p>Where are you heading today?</p>
+      </section>
 
-      <h2>Travel Updates</h2>
+      <section className="search">
+        <input
+          type="text"
+          placeholder="Search destination"
+        />
+      </section>
 
-      <div>
-        <p>⚠️ No major disruptions detected.</p>
-      </div>
+      <section className="update">
+        <strong>⚠️ Travel Update</strong>
+        <p>No major disruptions detected.</p>
+      </section>
 
-      <nav>
-        <button>Home</button>
-        <button>Directions</button>
-        <button>Rewards</button>
-        <button>Me</button>
+      <section className="map-placeholder">
+        Map coming soon 🗺️
+      </section>
+
+      <nav className="bottom-nav">
+        <button>🏠<br />Home</button>
+        <button>🧭<br />Directions</button>
+        <button>🎁<br />Rewards</button>
+        <button>👤<br />Me</button>
       </nav>
+
     </div>
   )
 }
