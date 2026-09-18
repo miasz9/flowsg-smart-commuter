@@ -1,4 +1,5 @@
 import './App.css'
+import Map from './components/Map'
 
 function App() {
   return (
@@ -25,8 +26,8 @@ function App() {
         <p>No major disruptions detected.</p>
       </section>
 
-      <section className="map-placeholder">
-        Map coming soon 🗺️
+      <section className="map">
+        <Map />
       </section>
 
       <nav className="bottom-nav">
