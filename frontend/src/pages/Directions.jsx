@@ -1,9 +1,12 @@
 import { useState } from 'react'
+
 import Map from '../components/Map'
+
 import { getRoute } from '../services/routing'
+
 import { getLtaAlerts, getLtaCrowding } from '../services/lta'
 
-function Directions() {
+function Directions({ routePreference = 'least-crowded' }) {
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
   const [showRoutes, setShowRoutes] = useState(false)
@@ -22,12 +25,12 @@ function Directions() {
   }
 
   const lineMapping = {
-        DT: 'DTL',
-        NS: 'NSL',
-        EW: 'EWL',
-        CC: 'CCL',
-        NE: 'NEL',
-        TE: 'TEL'
+    DT: 'DTL',
+    NS: 'NSL',
+    EW: 'EWL',
+    CC: 'CCL',
+    NE: 'NEL',
+    TE: 'TEL'
   }
 
   async function findRoutes() {
@@ -43,6 +46,7 @@ function Directions() {
 
     try {
       const result = await getRoute(from, to, arrivalTime)
+
       const ltaResult = await getLtaAlerts()
 
       setLtaAlerts(ltaResult.value?.Message || [])
@@ -80,50 +84,125 @@ function Directions() {
   }
 
   function getRouteCrowding(route) {
-  const crowdingLevels = route.legs
-    .filter((leg) => leg.mode === 'SUBWAY')
-    .map((leg) => lineMapping[leg.routeShortName])
-    .filter(Boolean)
-    .flatMap((line) => ltaCrowding[line] || [])
-    .map((station) => station.CrowdLevel)
-    .filter((level) => level && level !== 'NA')
+    const crowdingLevels = route.legs
+      .filter((leg) => leg.mode === 'SUBWAY')
+      .map((leg) => lineMapping[leg.routeShortName])
+      .filter(Boolean)
+      .flatMap((line) => ltaCrowding[line] || [])
+      .map((station) => station.CrowdLevel)
+      .filter((level) => level && level !== 'NA')
 
-  if (crowdingLevels.includes('h')) {
-    return 'high'
+    if (crowdingLevels.includes('h')) {
+      return 'high'
+    }
+
+    if (crowdingLevels.includes('m')) {
+      return 'moderate'
+    }
+
+    if (crowdingLevels.includes('l')) {
+      return 'low'
+    }
+
+    return 'unknown'
   }
 
-  if (crowdingLevels.includes('m')) {
-    return 'moderate'
+  function getRouteDisruption(route) {
+    const routeServices = route.legs
+      .filter((leg) => leg.mode !== 'WALK')
+      .map((leg) => leg.routeShortName || leg.route)
+      .filter(Boolean)
+
+    return ltaAlerts.some((alert) =>
+      routeServices.some((service) => {
+        const escapedService = service.replace(
+          /[.*+?^${}()|[\]\\]/g,
+          '\\$&'
+        )
+
+        const pattern = new RegExp(
+          `\\b${escapedService}\\b`,
+          'i'
+        )
+
+        return pattern.test(alert.Content)
+      })
+    )
   }
 
-  if (crowdingLevels.includes('l')) {
-    return 'low'
+  const routeCrowding = routes.map((route) =>
+    getRouteCrowding(route)
+  )
+
+  const routeDisruptions = routes.map((route) =>
+    getRouteDisruption(route)
+  )
+
+  const crowdingRank = {
+    low: 1,
+    moderate: 2,
+    high: 3,
+    unknown: 4
   }
 
-  return 'unknown'
-}
+  const routeScores = routes.map((route, index) => {
+    if (routePreference === 'fastest') {
+      return route.duration || Infinity
+    }
 
-const routeCrowding = routes.map((route) =>
-  getRouteCrowding(route)
-)
+    if (routePreference === 'accessible') {
+      return (
+        (route.walkDistance || Infinity) +
+        (route.transfers || 0) * 500
+      )
+    }
 
-const crowdingRank = {
-  low: 1,
-  moderate: 2,
-  high: 3,
-  unknown: 4
-}
+    if (routePreference === 'sheltered') {
+      return route.walkDistance || Infinity
+    }
 
-const recommendedRouteIndex = routeCrowding.reduce(
-  (bestIndex, currentLevel, index) => {
-    const bestLevel = routeCrowding[bestIndex]
+    return crowdingRank[routeCrowding[index]]
+  })
 
-    return crowdingRank[currentLevel] < crowdingRank[bestLevel]
-      ? index
-      : bestIndex
-  },
-  0
-)
+  const recommendedRouteIndex = routes.reduce(
+    (bestIndex, route, index) => {
+      const bestHasDisruption =
+        routeDisruptions[bestIndex]
+
+      const currentHasDisruption =
+        routeDisruptions[index]
+
+      if (
+        bestHasDisruption !== currentHasDisruption
+      ) {
+        return currentHasDisruption
+          ? bestIndex
+          : index
+      }
+
+      return routeScores[index] <
+        routeScores[bestIndex]
+        ? index
+        : bestIndex
+    },
+    0
+  )
+
+  function getPreferenceLabel() {
+    if (routePreference === 'fastest') {
+      return 'Fastest route'
+    }
+
+    if (routePreference === 'accessible') {
+      return 'Most accessible route'
+    }
+
+    if (routePreference === 'sheltered') {
+      return 'Most sheltered route'
+    }
+
+    return 'Lowest detected line crowding'
+  }
 
   return (
     <div className="directions-page">
@@ -135,14 +214,21 @@ const recommendedRouteIndex = routeCrowding.reduce(
       <section className="directions-content">
 
         <h2>Plan your journey</h2>
-        <p>Find a route that fits your time and travel preferences.</p>
+
+        <p>
+          Find a route that fits your time and travel
+          preferences.
+        </p>
 
         <div className="location-input">
           <label>From</label>
+
           <input
             type="text"
             value={from}
-            onChange={(event) => setFrom(event.target.value)}
+            onChange={(event) =>
+              setFrom(event.target.value)
+            }
             placeholder="e.g. Tampines"
           />
         </div>
@@ -156,10 +242,13 @@ const recommendedRouteIndex = routeCrowding.reduce(
 
         <div className="location-input">
           <label>To</label>
+
           <input
             type="text"
             value={to}
-            onChange={(event) => setTo(event.target.value)}
+            onChange={(event) =>
+              setTo(event.target.value)
+            }
             placeholder="e.g. Raffles Place"
           />
         </div>
@@ -169,11 +258,21 @@ const recommendedRouteIndex = routeCrowding.reduce(
 
           <select
             value={arrivalTime}
-            onChange={(event) => setArrivalTime(event.target.value)}
+            onChange={(event) =>
+              setArrivalTime(event.target.value)
+            }
           >
-            <option value="08:45">Arrive by 8:45 AM</option>
-            <option value="09:00">Arrive by 9:00 AM</option>
-            <option value="09:15">Arrive by 9:15 AM</option>
+            <option value="08:45">
+              Arrive by 8:45 AM
+            </option>
+
+            <option value="09:00">
+              Arrive by 9:00 AM
+            </option>
+
+            <option value="09:15">
+              Arrive by 9:15 AM
+            </option>
           </select>
         </div>
 
@@ -182,7 +281,9 @@ const recommendedRouteIndex = routeCrowding.reduce(
           onClick={findRoutes}
           disabled={loading}
         >
-          {loading ? 'Finding routes...' : 'Find Routes'}
+          {loading
+            ? 'Finding routes...'
+            : 'Find Routes'}
         </button>
 
         {error && (
@@ -201,62 +302,59 @@ const recommendedRouteIndex = routeCrowding.reduce(
                 Live LTA service alerts and crowd data
               </div>
 
+              <div className="preference-display">
+                🧭 Preference:{' '}
+                <strong>
+                  {getPreferenceLabel()}
+                </strong>
+              </div>
+
               {routes.map((route, index) => {
-                const crowdingLevels = route.legs
-                  .filter((leg) => leg.mode === 'SUBWAY')
-                  .map((leg) => lineMapping[leg.routeShortName])
-                  .filter(Boolean)
-                  .flatMap((line) => ltaCrowding[line] || [])
-                  .map((station) => station.CrowdLevel)
-                  .filter((level) => level && level !== 'NA')
-
                 const crowding =
-                  crowdingLevels.includes('h')
-                    ? 'high'
-                    : crowdingLevels.includes('m')
-                      ? 'moderate'
-                      : crowdingLevels.includes('l')
-                        ? 'low'
-                        : 'unknown'
+                  routeCrowding[index]
 
-                console.log(
-                  'Route stations:',
-                  route.legs
-                    .filter((leg) => leg.mode === 'SUBWAY')
-                    .map((leg) => ({
-                      line: leg.routeShortName,
-                      from: leg.from,
-                      to: leg.to
-                    }))
-                )
+                const disruption =
+                  ltaAlerts.find((alert) => {
+                    const routeServices =
+                      route.legs
+                        .filter(
+                          (leg) =>
+                            leg.mode !== 'WALK'
+                        )
+                        .map(
+                          (leg) =>
+                            leg.routeShortName ||
+                            leg.route
+                        )
+                        .filter(Boolean)
 
-                const routeServices = route.legs
-                  .filter((leg) => leg.mode !== 'WALK')
-                  .map((leg) => leg.routeShortName || leg.route)
-                  .filter(Boolean)
+                    return routeServices.some(
+                      (service) => {
+                        const escapedService =
+                          service.replace(
+                            /[.*+?^${}()|[\]\\]/g,
+                            '\\$&'
+                          )
 
-                const relevantAlert = ltaAlerts.find((alert) =>
-                  routeServices.some((service) => {
-                    const escapedService = service.replace(
-                      /[.*+?^${}()|[\]\\]/g,
-                      '\\$&'
+                        const pattern =
+                          new RegExp(
+                            `\\b${escapedService}\\b`,
+                            'i'
+                          )
+
+                        return pattern.test(
+                          alert.Content
+                        )
+                      }
                     )
-
-                    const pattern = new RegExp(
-                      `\\b${escapedService}\\b`,
-                      'i'
-                    )
-
-                    return pattern.test(alert.Content)
                   })
-                )
 
-                const disruption = relevantAlert
-                  ? relevantAlert.Content
-                  : null
+                const disruptionText =
+                  disruption?.Content || null
 
                 const isRecommended =
-                  index === recommendedRouteIndex
+                  index ===
+                  recommendedRouteIndex
 
                 const rewardPoints =
                   isRecommended
@@ -268,179 +366,253 @@ const recommendedRouteIndex = routeCrowding.reduce(
                     : 0
 
                 return (
-                <div
-                  key={route.id}
-                  className={`route-card ${
-                    selectedRoute === route.id ? 'selected' : ''
-                  }`}
-                  onClick={() => setSelectedRoute(route.id)}
-                >
+                  <div
+                    key={route.id}
+                    className={`route-card ${
+                      selectedRoute === route.id
+                        ? 'selected'
+                        : ''
+                    }`}
+                    onClick={() =>
+                      setSelectedRoute(route.id)
+                    }
+                  >
 
-                  <div className="route-status">
-                    {crowding === 'high' ? (
-                      <span className="status-warning">
-                        🔴 High line crowding
-                      </span>
-                    ) : crowding === 'moderate' ? (
-                      <span className="status-warning">
-                        ⚠️ Moderate line crowding
-                      </span>
-                    ) : crowding === 'low' ? (
-                      <span className="status-good">
-                        🟢 Low line crowding
-                      </span>
-                    ) : (
-                      <span>
-                        ⚪ Crowd data unavailable
-                      </span>
-                    )}
-                  </div>
+                    <div className="route-status">
 
-                  {disruption && (
-                    <div className="route-disruption">
-                      ⚠️ {disruption}
+                      {crowding === 'high' ? (
+                        <span className="status-warning">
+                          🔴 High line crowding
+                        </span>
+                      ) : crowding ===
+                        'moderate' ? (
+                        <span className="status-warning">
+                          ⚠️ Moderate line crowding
+                        </span>
+                      ) : crowding === 'low' ? (
+                        <span className="status-good">
+                          🟢 Low line crowding
+                        </span>
+                      ) : (
+                        <span>
+                          ⚪ Crowd data unavailable
+                        </span>
+                      )}
+
                     </div>
-                  )}
 
-                  <div className="route-header">
-                    <strong>
-                      {index === 0 ? 'Route 1' : `Alternative ${index}`}
-                    </strong>
-
-                    {isRecommended ? (
-                      <span className="recommended-badge">
-                        Recommended
-                      </span>
-                    ) : (
-                      <span>
-                        {route.transfers === 0
-                          ? 'No transfers'
-                          : `${route.transfers} transfer${
-                              route.transfers > 1 ? 's' : ''
-                            }`}
-                      </span>
+                    {disruptionText && (
+                      <div className="route-disruption">
+                        ⚠️ {disruptionText}
+                      </div>
                     )}
-                  </div>
 
-                  {isRecommended && (
-                    <p className="route-reason">
-                      ✓ Lowest detected line crowding
-                      {!disruption && ' • No detected service alert'}
+                    <div className="route-header">
+
+                      <strong>
+                        {index === 0
+                          ? 'Route 1'
+                          : `Alternative ${index}`}
+                      </strong>
+
+                      {isRecommended ? (
+                        <span className="recommended-badge">
+                          Recommended
+                        </span>
+                      ) : (
+                        <span>
+                          {route.transfers === 0
+                            ? 'No transfers'
+                            : `${route.transfers} transfer${
+                                route.transfers >
+                                1
+                                  ? 's'
+                                  : ''
+                              }`}
+                        </span>
+                      )}
+
+                    </div>
+
+                    {isRecommended && (
+                      <p className="route-reason">
+                        ✓ {getPreferenceLabel()}
+                        {!disruptionText &&
+                          ' • No detected service alert'}
+                      </p>
+                    )}
+
+                    {rewardPoints > 0 && (
+                      <div className="route-reward">
+                        🪙 +{rewardPoints} FlowSG points
+                      </div>
+                    )}
+
+                    <p>
+                      🚇{' '}
+                      {route.legs
+                        .filter(
+                          (leg) =>
+                            leg.mode !== 'WALK'
+                        )
+                        .map(
+                          (leg) =>
+                            leg.routeShortName ||
+                            leg.route
+                        )
+                        .filter(Boolean)
+                        .join(' + ') ||
+                        'Public transport'}
                     </p>
-                  )}
 
-                  {rewardPoints > 0 && (
-                    <div className="route-reward">
-                      🪙 +{rewardPoints} FlowSG points
+                    <p className="route-time">
+                      🕐{' '}
+                      {new Date(
+                        route.startTime
+                      ).toLocaleTimeString([], {
+                        hour: 'numeric',
+                        minute: '2-digit'
+                      })}
+                      {' → '}
+                      {new Date(
+                        route.endTime
+                      ).toLocaleTimeString([], {
+                        hour: 'numeric',
+                        minute: '2-digit'
+                      })}
+                    </p>
+
+                    <div className="route-info">
+
+                      <div>
+                        <strong>
+                          {route.durationMinutes} min
+                        </strong>
+
+                        <small>
+                          Travel time
+                        </small>
+                      </div>
+
+                      <div>
+                        <strong>
+                          {route.walkingDistance} m
+                        </strong>
+
+                        <small>
+                          Walking
+                        </small>
+                      </div>
+
+                      <div>
+                        <strong>
+                          ${route.fare}
+                        </strong>
+
+                        <small>
+                          Fare
+                        </small>
+                      </div>
+
                     </div>
-                  )}
 
-                  <p>
-                    🚇{' '}
-                    {route.legs
-                      .filter((leg) => leg.mode !== 'WALK')
-                      .map((leg) => leg.routeShortName || leg.route)
-                      .filter(Boolean)
-                      .join(' + ') || 'Public transport'}
-                  </p>
-                  
-                  <p className="route-time">
-                    🕐 {new Date(route.startTime).toLocaleTimeString([], {
-                      hour: 'numeric',
-                      minute: '2-digit'
-                    })}
-                    {' → '}
-                    {new Date(route.endTime).toLocaleTimeString([], {
-                      hour: 'numeric',
-                      minute: '2-digit'
-                    })}
-                  </p>
+                    <p className="route-benefit">
+                      ✓{' '}
+                      {route.transfers === 0
+                        ? 'Direct journey'
+                        : `${route.transfers} transfer${
+                            route.transfers >
+                            1
+                              ? 's'
+                              : ''
+                          }`}
+                    </p>
 
-                  <div className="route-info">
-                    <div>
-                      <strong>{route.durationMinutes} min</strong>
-                      <small>Travel time</small>
-                    </div>
-
-                    <div>
-                      <strong>{route.walkingDistance} m</strong>
-                      <small>Walking</small>
-                    </div>
-
-                    <div>
-                      <strong>${route.fare}</strong>
-                      <small>Fare</small>
-                    </div>
                   </div>
-
-                  <p className="route-benefit">
-                    ✓ {route.transfers === 0
-                      ? 'Direct journey'
-                      : `${route.transfers} transfer${
-                          route.transfers > 1 ? 's' : ''
-                        }`}
-                  </p>
-                </div>
                 )
-            })}
+              })}
 
               {selectedRoute && (
                 <div className="selected-route">
-                  <strong>✓ Route {selectedRoute} selected</strong>
+
+                  <strong>
+                    ✓ Route {selectedRoute} selected
+                  </strong>
 
                   {(() => {
-                    const route = routes.find(
-                      (route) => route.id === selectedRoute
-                    )
+                    const route =
+                      routes.find(
+                        (route) =>
+                          route.id ===
+                          selectedRoute
+                      )
 
                     if (!route) return null
 
                     return (
                       <div className="journey-breakdown">
+
                         <p>
-                          🚶 Walking: {route.walkingMinutes} min
+                          🚶 Walking:{' '}
+                          {route.walkingMinutes}{' '}
+                          min
                         </p>
 
                         <p>
-                          🚇 Public transport: {route.transitMinutes} min
+                          🚇 Public transport:{' '}
+                          {route.transitMinutes}{' '}
+                          min
                         </p>
 
                         <p>
-                          ⏳ Waiting: {route.waitingMinutes} min
+                          ⏳ Waiting:{' '}
+                          {route.waitingMinutes}{' '}
+                          min
                         </p>
 
                         <p>
-                          🔄 Transfers: {route.transfers}
+                          🔄 Transfers:{' '}
+                          {route.transfers}
                         </p>
 
                         <p>
                           💰 Fare: ${route.fare}
                         </p>
+
                       </div>
                     )
                   })()}
+
                 </div>
               )}
 
             </section>
 
-            {/* TEST MAP */}
             <section className="directions-map">
-              <h2>Test map</h2>
 
-              <div style={{ height: '350px', width: '100%' }}>
+              <h2>Route map</h2>
+
+              <div
+                style={{
+                  height: '350px',
+                  width: '100%'
+                }}
+              >
                 <Map
                   mapId="directions-map"
                   selectedRoute={selectedRoute}
-                  routeData={routes.find((route) => route.id === selectedRoute)}
+                  routeData={routes.find(
+                    (route) =>
+                      route.id === selectedRoute
+                  )}
                 />
               </div>
+
             </section>
           </>
         )}
 
       </section>
-
     </div>
   )
 }

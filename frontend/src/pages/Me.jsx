@@ -1,6 +1,9 @@
 import './Me.css'
 
-export default function Me() {
+export default function Me({
+  routePreference,
+  setRoutePreference
+}) {
   return (
     <div className="me-page">
       <div className="profile-card">
@@ -35,6 +38,37 @@ export default function Me() {
           <span>Time saved</span>
         </div>
       </div>
+
+      <div className="preference-card">
+        <div className="setting-icon">🧭</div>
+
+        <div className="setting-content">
+            <strong>Route preference</strong>
+
+            <select
+            value={routePreference}
+            onChange={(event) =>
+                setRoutePreference(event.target.value)
+            }
+            >
+            <option value="least-crowded">
+                Least Crowded
+            </option>
+
+            <option value="fastest">
+                Fastest
+            </option>
+
+            <option value="accessible">
+                Most Accessible
+            </option>
+
+            <option value="sheltered">
+                Most Sheltered
+            </option>
+            </select>
+        </div>
+        </div>
 
       <section className="me-section">
         <h2>Journey preferences</h2>
@@ -89,5 +123,6 @@ export default function Me() {
         </div>
       </section>
     </div>
+    
   )
 }

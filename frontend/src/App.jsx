@@ -7,6 +7,7 @@ import Me from './pages/Me'
 
 function App() {
   const [page, setPage] = useState('home')
+  const [routePreference, setRoutePreference] = useState('least-crowded')
 
   return (
     <div className="app">
@@ -41,7 +42,7 @@ function App() {
       )}
 
       {page === 'directions' && (
-        <Directions />
+        <Directions routePreference={routePreference} />
       )}
 
       {page === 'rewards' && (
@@ -49,7 +50,10 @@ function App() {
       )}
 
       {page === 'me' && (
-        <Me />
+        <Me
+          routePreference={routePreference}
+          setRoutePreference={setRoutePreference}
+        />
       )}
 
       <nav className="bottom-nav">
