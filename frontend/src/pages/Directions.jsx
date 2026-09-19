@@ -6,15 +6,22 @@ import { getRoute } from '../services/routing'
 
 import { getLtaAlerts, getLtaCrowding } from '../services/lta'
 
-function Directions({ routePreference = 'least-crowded' }) {
+function Directions({
+  routePreference = 'least-crowded',
+  initialDestination = ''
+}) {
   const [from, setFrom] = useState('')
-  const [to, setTo] = useState('')
+  const [to, setTo] = useState(initialDestination)
+
   const [showRoutes, setShowRoutes] = useState(false)
   const [selectedRoute, setSelectedRoute] = useState(null)
   const [routes, setRoutes] = useState([])
+
   const [loading, setLoading] = useState(false)
   const [error, setError] = useState('')
+
   const [arrivalTime, setArrivalTime] = useState('08:45')
+
   const [ltaAlerts, setLtaAlerts] = useState([])
   const [ltaCrowding, setLtaCrowding] = useState({})
 
@@ -53,12 +60,13 @@ function Directions({ routePreference = 'least-crowded' }) {
 
       const trainLines = [
         ...new Set(
-          result.routes.flatMap((route) =>
-            route.legs
-              .filter((leg) => leg.mode === 'SUBWAY')
-              .map((leg) => lineMapping[leg.routeShortName])
-              .filter(Boolean)
-          )
+          result.routes
+            .flatMap((route) =>
+              route.legs
+                .filter((leg) => leg.mode === 'SUBWAY')
+                .map((leg) => lineMapping[leg.routeShortName])
+                .filter(Boolean)
+            )
         )
       ]
 
@@ -73,10 +81,13 @@ function Directions({ routePreference = 'least-crowded' }) {
       setLtaCrowding(Object.fromEntries(crowdingResults))
 
       setRoutes(result.routes)
+
       setSelectedRoute(result.routes[0]?.id || null)
+
       setShowRoutes(true)
     } catch (error) {
       console.error(error)
+
       setError('Could not find a route. Please try again.')
     } finally {
       setLoading(false)
@@ -147,18 +158,18 @@ function Directions({ routePreference = 'least-crowded' }) {
 
   const routeScores = routes.map((route, index) => {
     if (routePreference === 'fastest') {
-      return route.duration || Infinity
+      return route.durationMinutes ?? route.duration ?? Infinity
     }
 
     if (routePreference === 'accessible') {
       return (
-        (route.walkDistance || Infinity) +
+        (route.walkingDistance ?? route.walkDistance ?? Infinity) +
         (route.transfers || 0) * 500
       )
     }
 
     if (routePreference === 'sheltered') {
-      return route.walkDistance || Infinity
+      return route.walkingDistance ?? route.walkDistance ?? Infinity
     }
 
     return crowdingRank[routeCrowding[index]]
@@ -205,14 +216,12 @@ function Directions({ routePreference = 'least-crowded' }) {
   }
 
   return (
-    <div className="directions-page">
-
-      <header className="header">
-        <div className="logo">FlowSG</div>
+    <div className="directions-page page-content">
+      <header className="simple-header">
+        <div className="brand-title">FlowSG</div>
       </header>
 
       <section className="directions-content">
-
         <h2>Plan your journey</h2>
 
         <p>
@@ -295,7 +304,6 @@ function Directions({ routePreference = 'least-crowded' }) {
         {showRoutes && (
           <>
             <section className="route-results">
-
               <h2>Route options</h2>
 
               <div className="demo-label">
@@ -377,9 +385,7 @@ function Directions({ routePreference = 'least-crowded' }) {
                       setSelectedRoute(route.id)
                     }
                   >
-
                     <div className="route-status">
-
                       {crowding === 'high' ? (
                         <span className="status-warning">
                           🔴 High line crowding
@@ -398,7 +404,6 @@ function Directions({ routePreference = 'least-crowded' }) {
                           ⚪ Crowd data unavailable
                         </span>
                       )}
-
                     </div>
 
                     {disruptionText && (
@@ -408,7 +413,6 @@ function Directions({ routePreference = 'least-crowded' }) {
                     )}
 
                     <div className="route-header">
-
                       <strong>
                         {index === 0
                           ? 'Route 1'
@@ -424,14 +428,12 @@ function Directions({ routePreference = 'least-crowded' }) {
                           {route.transfers === 0
                             ? 'No transfers'
                             : `${route.transfers} transfer${
-                                route.transfers >
-                                1
+                                route.transfers > 1
                                   ? 's'
                                   : ''
                               }`}
                         </span>
                       )}
-
                     </div>
 
                     {isRecommended && (
@@ -483,7 +485,6 @@ function Directions({ routePreference = 'least-crowded' }) {
                     </p>
 
                     <div className="route-info">
-
                       <div>
                         <strong>
                           {route.durationMinutes} min
@@ -513,7 +514,6 @@ function Directions({ routePreference = 'least-crowded' }) {
                           Fare
                         </small>
                       </div>
-
                     </div>
 
                     <p className="route-benefit">
@@ -521,20 +521,17 @@ function Directions({ routePreference = 'least-crowded' }) {
                       {route.transfers === 0
                         ? 'Direct journey'
                         : `${route.transfers} transfer${
-                            route.transfers >
-                            1
+                            route.transfers > 1
                               ? 's'
                               : ''
                           }`}
                     </p>
-
                   </div>
                 )
               })}
 
               {selectedRoute && (
                 <div className="selected-route">
-
                   <strong>
                     ✓ Route {selectedRoute} selected
                   </strong>
@@ -551,7 +548,6 @@ function Directions({ routePreference = 'least-crowded' }) {
 
                     return (
                       <div className="journey-breakdown">
-
                         <p>
                           🚶 Walking:{' '}
                           {route.walkingMinutes}{' '}
@@ -578,18 +574,14 @@ function Directions({ routePreference = 'least-crowded' }) {
                         <p>
                           💰 Fare: ${route.fare}
                         </p>
-
                       </div>
                     )
                   })()}
-
                 </div>
               )}
-
             </section>
 
             <section className="directions-map">
-
               <h2>Route map</h2>
 
               <div
@@ -607,11 +599,9 @@ function Directions({ routePreference = 'least-crowded' }) {
                   )}
                 />
               </div>
-
             </section>
           </>
         )}
-
       </section>
     </div>
   )
