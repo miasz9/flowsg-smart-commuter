@@ -3,61 +3,89 @@ import './Me.css'
 export default function Me() {
   return (
     <div className="me-page">
-      <div className="me-header">
-        <div className="profile-icon">👤</div>
+      <div className="profile-card">
+        <div className="profile-avatar">R</div>
 
-        <div>
-          <p className="page-label">MY PROFILE</p>
+        <div className="profile-info">
           <h1>Rachel</h1>
           <p>Smart commuter</p>
+          <span>🌱 Making greener journeys</span>
+        </div>
+
+        <button className="edit-button">Edit</button>
+      </div>
+
+      <div className="stats-card">
+        <div className="stat">
+          <strong>120</strong>
+          <span>Points</span>
+        </div>
+
+        <div className="stat-divider"></div>
+
+        <div className="stat">
+          <strong>12</strong>
+          <span>Trips</span>
+        </div>
+
+        <div className="stat-divider"></div>
+
+        <div className="stat">
+          <strong>4.2h</strong>
+          <span>Time saved</span>
         </div>
       </div>
 
       <section className="me-section">
-        <h2>Preferences</h2>
+        <h2>Journey preferences</h2>
 
-        <div className="setting-item">
-          <div>
+        <div className="setting-card">
+          <div className="setting-icon">🚇</div>
+          <div className="setting-content">
             <strong>Preferred transport</strong>
             <p>MRT + Bus</p>
           </div>
-          <span>›</span>
+          <span className="arrow">›</span>
         </div>
 
-        <div className="setting-item">
-          <div>
+        <div className="setting-card">
+          <div className="setting-icon">📍</div>
+          <div className="setting-content">
             <strong>Usual destination</strong>
             <p>Raffles Place</p>
           </div>
-          <span>›</span>
+          <span className="arrow">›</span>
         </div>
 
-        <div className="setting-item">
-          <div>
+        <div className="setting-card">
+          <div className="setting-icon">⏰</div>
+          <div className="setting-content">
             <strong>Arrival preference</strong>
             <p>Arrive by 8:45 AM</p>
           </div>
-          <span>›</span>
+          <span className="arrow">›</span>
         </div>
       </section>
 
       <section className="me-section">
-        <h2>Accessibility</h2>
+        <h2>App preferences</h2>
 
-        <div className="setting-item">
-          <div>
+        <div className="setting-card">
+          <div className="setting-icon">🔤</div>
+          <div className="setting-content">
             <strong>Font size</strong>
             <p>Default</p>
           </div>
-          <span>›</span>
+          <span className="arrow">›</span>
         </div>
 
-        <div className="setting-item">
-          <div>
+        <div className="setting-card">
+          <div className="setting-icon">☀️</div>
+          <div className="setting-content">
             <strong>Theme</strong>
             <p>Light</p>
           </div>
-          <span>›</span>
+          <span className="arrow">›</span>
         </div>
       </section>
     </div>

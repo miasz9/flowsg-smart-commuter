@@ -1,119 +1,177 @@
 .rewards-page {
   max-width: 900px;
   margin: 0 auto;
-  padding: 32px;
+  padding: 28px;
+  padding-bottom: 100px;
 }
 
 .rewards-header {
-  margin-bottom: 24px;
-}
-
-.page-label {
-  font-size: 12px;
-  font-weight: 700;
-  letter-spacing: 1px;
-  color: #2e7d32;
+  margin-bottom: 20px;
 }
 
 .rewards-header h1 {
   margin: 4px 0;
-  font-size: 32px;
+  font-size: 30px;
 }
 
 .rewards-header p {
-  color: #666;
+  margin: 0;
+  color: #777;
+  font-size: 14px;
 }
+
+.page-label {
+  margin: 0;
+  font-size: 11px;
+  font-weight: 700;
+  letter-spacing: 1.2px;
+  color: #2e7d32;
+}
+
+/* Points */
 
 .points-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
   padding: 28px;
-  border-radius: 18px;
-  background: #e8f5e9;
-  margin-bottom: 28px;
+  margin-bottom: 14px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #e8f5e9, #f4fbf5);
 }
 
 .points-label {
-  font-size: 12px;
+  font-size: 11px;
   font-weight: 700;
+  letter-spacing: 0.8px;
   color: #558b5c;
 }
 
 .points-value {
+  margin-top: 3px;
   font-size: 48px;
   font-weight: 800;
   color: #2e7d32;
 }
 
 .coin-icon {
-  font-size: 48px;
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 32px;
 }
+
+/* Progress */
+
+.goal-card {
+  padding: 18px;
+  margin-bottom: 30px;
+  border: 1px solid #eeeeee;
+  border-radius: 16px;
+  background: white;
+}
+
+.goal-card strong {
+  font-size: 14px;
+}
+
+.goal-card p {
+  margin: 5px 0 13px;
+  color: #777;
+  font-size: 12px;
+}
+
+.progress-bar {
+  height: 8px;
+  overflow: hidden;
+  border-radius: 10px;
+  background: #e5e5e5;
+}
+
+.progress-fill {
+  width: 60%;
+  height: 100%;
+  border-radius: 10px;
+  background: #2e7d32;
+}
+
+/* Sections */
 
 .rewards-section {
   margin-bottom: 28px;
 }
 
 .rewards-section h2 {
-  font-size: 20px;
-  margin-bottom: 14px;
+  margin: 0 0 12px 4px;
+  font-size: 17px;
 }
 
-.reward-item,
-.activity-item {
+/* Reward cards */
+
+.reward-item {
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 16px;
-  margin-bottom: 10px;
-  border: 1px solid #eee;
-  border-radius: 12px;
+  padding: 15px;
+  margin-bottom: 9px;
+  border: 1px solid #eeeeee;
+  border-radius: 15px;
   background: white;
 }
 
 .reward-icon {
-  font-size: 24px;
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #f0f7f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
 }
 
-.reward-item p,
+.reward-item strong {
+  font-size: 14px;
+}
+
+.reward-item p {
+  margin: 4px 0 0;
+  color: #777;
+  font-size: 12px;
+}
+
+/* Activity */
+
+.activity-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: 15px;
+  margin-bottom: 9px;
+  border: 1px solid #eeeeee;
+  border-radius: 15px;
+  background: white;
+}
+
+.activity-item strong {
+  font-size: 14px;
+}
+
 .activity-item p {
   margin: 4px 0 0;
   color: #777;
-  font-size: 13px;
-}
-
-.activity-item {
-  justify-content: space-between;
+  font-size: 12px;
 }
 
 .activity-item > span {
+  padding: 6px 9px;
+  border-radius: 8px;
+  background: #e8f5e9;
   color: #2e7d32;
-  font-weight: 700;
-}
-
-.goal-card {
-  padding: 18px;
-  margin-bottom: 28px;
-  border-radius: 14px;
-  background: #f7f7f7;
-}
-
-.goal-card p {
-  margin: 6px 0 12px;
-  color: #777;
   font-size: 13px;
-}
-
-.progress-bar {
-  height: 8px;
-  background: #ddd;
-  border-radius: 10px;
-  overflow: hidden;
-}
-
-.progress-fill {
-  width: 60%;
-  height: 100%;
-  background: #2e7d32;
-  border-radius: 10px;
+  font-weight: 700;
 }

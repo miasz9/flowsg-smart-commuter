@@ -1,65 +1,151 @@
-import './Me.css'
+.me-page {
+  max-width: 900px;
+  margin: 0 auto;
+  padding: 28px;
+  padding-bottom: 100px;
+}
 
-export default function Me() {
-  return (
-    <div className="me-page">
-      <div className="me-header">
-        <div className="profile-icon">👤</div>
+.profile-card {
+  display: flex;
+  align-items: center;
+  gap: 16px;
+  padding: 24px;
+  border-radius: 22px;
+  background: linear-gradient(135deg, #e8f5e9, #f4fbf5);
+  margin-bottom: 16px;
+}
 
-        <div>
-          <p className="page-label">MY PROFILE</p>
-          <h1>Rachel</h1>
-          <p>Smart commuter</p>
-        </div>
-      </div>
+.profile-avatar {
+  width: 68px;
+  height: 68px;
+  border-radius: 50%;
+  background: #2e7d32;
+  color: white;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 28px;
+  font-weight: 700;
+  flex-shrink: 0;
+}
 
-      <section className="me-section">
-        <h2>Preferences</h2>
+.profile-info {
+  flex: 1;
+}
 
-        <div className="setting-item">
-          <div>
-            <strong>Preferred transport</strong>
-            <p>MRT + Bus</p>
-          </div>
-          <span>›</span>
-        </div>
+.profile-info h1 {
+  margin: 0 0 3px;
+  font-size: 25px;
+}
 
-        <div className="setting-item">
-          <div>
-            <strong>Usual destination</strong>
-            <p>Raffles Place</p>
-          </div>
-          <span>›</span>
-        </div>
+.profile-info p {
+  margin: 0 0 7px;
+  color: #666;
+  font-size: 14px;
+}
 
-        <div className="setting-item">
-          <div>
-            <strong>Arrival preference</strong>
-            <p>Arrive by 8:45 AM</p>
-          </div>
-          <span>›</span>
-        </div>
-      </section>
+.profile-info span {
+  font-size: 12px;
+  color: #4f7f55;
+}
 
-      <section className="me-section">
-        <h2>Accessibility</h2>
+.edit-button {
+  border: none;
+  background: white;
+  color: #2e7d32;
+  padding: 8px 13px;
+  border-radius: 10px;
+  font-weight: 600;
+  cursor: pointer;
+}
 
-        <div className="setting-item">
-          <div>
-            <strong>Font size</strong>
-            <p>Default</p>
-          </div>
-          <span>›</span>
-        </div>
+.stats-card {
+  display: flex;
+  justify-content: space-around;
+  align-items: center;
+  padding: 20px 10px;
+  margin-bottom: 30px;
+  background: white;
+  border: 1px solid #eeeeee;
+  border-radius: 18px;
+}
 
-        <div className="setting-item">
-          <div>
-            <strong>Theme</strong>
-            <p>Light</p>
-          </div>
-          <span>›</span>
-        </div>
-      </section>
-    </div>
-  )
+.stat {
+  text-align: center;
+  flex: 1;
+}
+
+.stat strong {
+  display: block;
+  font-size: 20px;
+  color: #2e7d32;
+  margin-bottom: 4px;
+}
+
+.stat span {
+  font-size: 12px;
+  color: #777;
+}
+
+.stat-divider {
+  width: 1px;
+  height: 35px;
+  background: #e5e5e5;
+}
+
+.me-section {
+  margin-bottom: 26px;
+}
+
+.me-section h2 {
+  margin: 0 0 12px 4px;
+  font-size: 17px;
+}
+
+.setting-card {
+  display: flex;
+  align-items: center;
+  gap: 14px;
+  padding: 15px;
+  margin-bottom: 9px;
+  border-radius: 15px;
+  background: white;
+  border: 1px solid #eeeeee;
+  transition: transform 0.15s ease;
+}
+
+.setting-card:hover {
+  transform: translateY(-1px);
+}
+
+.setting-icon {
+  width: 40px;
+  height: 40px;
+  border-radius: 12px;
+  background: #f0f7f1;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-size: 19px;
+}
+
+.setting-content {
+  flex: 1;
+}
+
+.setting-content strong {
+  display: block;
+  font-size: 14px;
+  margin-bottom: 3px;
+}
+
+.setting-content p {
+  margin: 0;
+  font-size: 12px;
+  color: #888;
+}
+
+.arrow {
+  font-size: 25px;
+  color: #aaa;
 }
