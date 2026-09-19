@@ -1,0 +1,89 @@
+import { useState } from 'react'
+import './App.css'
+import Map from './components/Map'
+import Directions from './pages/Directions'
+import Rewards from './pages/Rewards'
+import Me from './pages/Me'
+
+function App() {
+  const [page, setPage] = useState('home')
+  const [routePreference, setRoutePreference] = useState('least-crowded')
+
+  return (
+    <div className="app">
+
+      {page === 'home' && (
+        <>
+          <header className="header">
+            <div className="logo">FlowSG</div>
+          </header>
+
+          <section className="greeting">
+            <h2>Good morning, Rachel 👋</h2>
+            <p>Where are you heading today?</p>
+          </section>
+
+          <section className="search">
+            <input
+              type="text"
+              placeholder="Search destination"
+            />
+          </section>
+
+          <section className="update">
+            <strong>⚠️ Travel Update</strong>
+            <p>No major disruptions detected.</p>
+          </section>
+
+          <section className="map">
+            <Map />
+          </section>
+        </>
+      )}
+
+      {page === 'directions' && (
+        <Directions routePreference={routePreference} />
+      )}
+
+      {page === 'rewards' && (
+        <Rewards />
+      )}
+
+      {page === 'me' && (
+        <Me
+          routePreference={routePreference}
+          setRoutePreference={setRoutePreference}
+        />
+      )}
+
+      <nav className="bottom-nav">
+        <button onClick={() => setPage('home')}>
+          🏠
+          <br />
+          Home
+        </button>
+
+        <button onClick={() => setPage('directions')}>
+          🧭
+          <br />
+          Directions
+        </button>
+
+        <button onClick={() => setPage('rewards')}>
+          🎁
+          <br />
+          Rewards
+        </button>
+
+        <button onClick={() => setPage('me')}>
+          👤
+          <br />
+          Me
+        </button>
+      </nav>
+
+    </div>
+  )
+}
+
+export default App

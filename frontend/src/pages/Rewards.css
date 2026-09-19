@@ -2,77 +2,190 @@
   max-width: 900px;
   margin: 0 auto;
   padding: 28px;
-  padding-bottom: 100px;
+  padding-bottom: 110px;
+  color: var(--text-main, #17221a);
 }
 
+/* =========================================================
+   PAGE HEADER
+   ========================================================= */
+
 .rewards-header {
-  margin-bottom: 20px;
+  margin-bottom: 24px;
 }
 
 .rewards-header h1 {
-  margin: 4px 0;
+  margin: 4px 0 6px;
   font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: -0.6px;
 }
 
 .rewards-header p {
   margin: 0;
-  color: #777;
+  color: var(--text-muted, #777);
   font-size: 14px;
+  line-height: 1.5;
 }
 
 .page-label {
   margin: 0;
   font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 1.2px;
-  color: #2e7d32;
+  font-weight: 800;
+  letter-spacing: 1.3px;
+  color: #3f8f5b;
 }
 
-/* Points */
+/* =========================================================
+   CURRENT JSX HEADER
+   ========================================================= */
+
+.rewards-page .page-header {
+  margin-bottom: 20px;
+}
+
+.rewards-page .purple-header {
+  padding: 4px 0 0;
+  background: transparent;
+  color: var(--text-main, #17221a);
+}
+
+.rewards-page .purple-header h1 {
+  margin: 5px 0 6px;
+  font-size: 30px;
+  line-height: 1.15;
+  letter-spacing: -0.6px;
+}
+
+.rewards-page .purple-header p {
+  margin: 0;
+  color: var(--text-muted, #777);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   POINTS CARD
+   ========================================================= */
+
+.points-card,
+.rewards-balance-card {
+  position: relative;
+  overflow: hidden;
+  padding: 25px 26px;
+  margin-bottom: 14px;
+  border: 1px solid rgba(67, 160, 104, 0.14);
+  border-radius: 22px;
+  background:
+    radial-gradient(
+      circle at 90% 15%,
+      rgba(120, 190, 137, 0.2),
+      transparent 34%
+    ),
+    linear-gradient(135deg, #e8f5e9, #f5fbf6);
+  box-shadow: 0 8px 24px rgba(48, 94, 57, 0.06);
+}
+
+.points-card::after,
+.rewards-balance-card::after {
+  content: "";
+  position: absolute;
+  width: 120px;
+  height: 120px;
+  right: -42px;
+  bottom: -55px;
+  border-radius: 50%;
+  background: rgba(255, 255, 255, 0.45);
+  pointer-events: none;
+}
 
 .points-card {
   display: flex;
   justify-content: space-between;
   align-items: center;
-  padding: 28px;
-  margin-bottom: 14px;
-  border-radius: 22px;
-  background: linear-gradient(135deg, #e8f5e9, #f4fbf5);
 }
 
-.points-label {
-  font-size: 11px;
-  font-weight: 700;
-  letter-spacing: 0.8px;
-  color: #558b5c;
+.rewards-card-top {
+  position: relative;
+  z-index: 1;
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 12px;
 }
 
-.points-value {
-  margin-top: 3px;
-  font-size: 48px;
+.points-label,
+.rewards-balance-card .points-label {
+  font-size: 10px;
   font-weight: 800;
+  letter-spacing: 1px;
+  color: #5b8663;
+}
+
+.balance-pts,
+.points-value {
+  position: relative;
+  z-index: 1;
+  margin-top: 3px;
+  font-size: 46px;
+  line-height: 1;
+  font-weight: 800;
+  letter-spacing: -1.5px;
   color: #2e7d32;
 }
 
+.rewards-balance-card > p,
+.points-card > p {
+  position: relative;
+  z-index: 1;
+  margin: 10px 0 0;
+  color: #65806a;
+  font-size: 12px;
+}
+
+.rewards-card-badge {
+  position: relative;
+  z-index: 1;
+  flex-shrink: 0;
+  padding: 7px 10px;
+  border: 1px solid rgba(67, 160, 104, 0.14);
+  border-radius: 999px;
+  background: rgba(255, 255, 255, 0.72);
+  color: #4e7656;
+  font-size: 11px;
+  font-weight: 700;
+  white-space: nowrap;
+}
+
 .coin-icon {
+  position: relative;
+  z-index: 1;
   width: 68px;
   height: 68px;
   border-radius: 50%;
-  background: white;
+  background: rgba(255, 255, 255, 0.82);
   display: flex;
   align-items: center;
   justify-content: center;
   font-size: 32px;
+  box-shadow: 0 6px 16px rgba(48, 94, 57, 0.08);
 }
 
-/* Progress */
+/* =========================================================
+   NEXT REWARD / GOAL
+   ========================================================= */
+
+.goal-card,
+.rewards-page .rewards-section:has(.progress-bar) {
+  position: relative;
+}
 
 .goal-card {
   padding: 18px;
-  margin-bottom: 30px;
-  border: 1px solid #eeeeee;
-  border-radius: 16px;
-  background: white;
+  margin-bottom: 28px;
+  border: 1px solid var(--border, #e9e9e9);
+  border-radius: 17px;
+  background: var(--card-bg, #fff);
 }
 
 .goal-card strong {
@@ -81,97 +194,472 @@
 
 .goal-card p {
   margin: 5px 0 13px;
-  color: #777;
+  color: var(--text-muted, #777);
   font-size: 12px;
+  line-height: 1.45;
+}
+
+.rewards-page .rewards-section .progress-bar {
+  height: 9px;
+  overflow: hidden;
+  border-radius: 999px;
+  background: #e8ece9;
 }
 
 .progress-bar {
-  height: 8px;
+  height: 9px;
   overflow: hidden;
-  border-radius: 10px;
-  background: #e5e5e5;
+  border-radius: 999px;
+  background: #e8ece9;
 }
 
 .progress-fill {
   width: 60%;
   height: 100%;
-  border-radius: 10px;
-  background: #2e7d32;
+  border-radius: 999px;
+  background: linear-gradient(90deg, #3f8f5b, #68ad78);
+  transition: width 0.3s ease;
 }
 
-/* Sections */
+/* =========================================================
+   SECTIONS
+   ========================================================= */
 
 .rewards-section {
-  margin-bottom: 28px;
+  margin-bottom: 30px;
 }
 
 .rewards-section h2 {
-  margin: 0 0 12px 4px;
+  margin: 0 0 13px 2px;
   font-size: 17px;
+  line-height: 1.3;
+  letter-spacing: -0.2px;
 }
 
-/* Reward cards */
+/* =========================================================
+   POINTS FEEDBACK
+   ========================================================= */
 
-.reward-item {
+.points-feedback {
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  width: fit-content;
+  margin: 2px 0 14px;
+  padding: 8px 12px;
+  border: 1px solid rgba(67, 160, 104, 0.17);
+  border-radius: 999px;
+  background: rgba(67, 160, 104, 0.09);
+  color: #3f8f5b;
+  font-size: 12px;
+  font-weight: 700;
+}
+
+/* =========================================================
+   HOW TO EARN CARDS
+   ========================================================= */
+
+.reward-item,
+.earning-card {
+  position: relative;
+  width: 100%;
   display: flex;
   align-items: center;
   gap: 14px;
-  padding: 15px;
-  margin-bottom: 9px;
-  border: 1px solid #eeeeee;
-  border-radius: 15px;
-  background: white;
+  padding: 15px 16px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border, #e8e8e8);
+  border-radius: 17px;
+  background: var(--card-bg, #fff);
+  color: var(--text-main, #17221a);
+  text-align: left;
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.025);
 }
 
-.reward-icon {
-  width: 40px;
-  height: 40px;
-  border-radius: 12px;
-  background: #f0f7f1;
+.earning-card {
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    background 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.earning-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(67, 160, 104, 0.28);
+  background: rgba(67, 160, 104, 0.025);
+  box-shadow: 0 7px 18px rgba(48, 94, 57, 0.07);
+}
+
+.earning-card:active {
+  transform: translateY(0);
+}
+
+.reward-icon,
+.earning-card .reward-icon {
+  width: 43px;
+  height: 43px;
+  flex-shrink: 0;
   display: flex;
   align-items: center;
   justify-content: center;
-  font-size: 19px;
+  border-radius: 13px;
+  background: #f0f7f1;
+  font-size: 20px;
 }
 
-.reward-item strong {
+.reward-item strong,
+.earning-card strong {
+  display: block;
+  margin-bottom: 3px;
   font-size: 14px;
+  line-height: 1.35;
 }
 
-.reward-item p {
-  margin: 4px 0 0;
-  color: #777;
+.reward-item p,
+.earning-card p {
+  margin: 0;
+  color: var(--text-muted, #777);
   font-size: 12px;
+  line-height: 1.4;
 }
 
-/* Activity */
+/* =========================================================
+   RECENT ACTIVITY
+   ========================================================= */
 
-.activity-item {
+.activity-item,
+.activity-card {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: 15px;
-  margin-bottom: 9px;
-  border: 1px solid #eeeeee;
-  border-radius: 15px;
-  background: white;
+  gap: 16px;
+  padding: 15px 16px;
+  margin-bottom: 10px;
+  border: 1px solid var(--border, #e8e8e8);
+  border-radius: 17px;
+  background: var(--card-bg, #fff);
+  box-shadow: 0 3px 12px rgba(0, 0, 0, 0.025);
 }
 
-.activity-item strong {
+.activity-item strong,
+.activity-card strong {
+  display: block;
+  margin-bottom: 4px;
   font-size: 14px;
+  line-height: 1.35;
 }
 
-.activity-item p {
-  margin: 4px 0 0;
+.activity-item p,
+.activity-card p {
+  margin: 0;
+  color: var(--text-muted, #777);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.activity-item > span,
+.activity-card > span {
+  flex-shrink: 0;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(67, 160, 104, 0.1);
+  color: #3f8f5b;
+  font-size: 12px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   COMMUTER REWARDS TABS
+   ========================================================= */
+
+.deals-tabs {
+  display: flex;
+  gap: 7px;
+  padding: 4px;
+  margin-bottom: 14px;
+  border-radius: 13px;
+  background: #f1f3f1;
+}
+
+.deal-tab {
+  flex: 1;
+  min-height: 36px;
+  padding: 7px 12px;
+  border: 0;
+  border-radius: 10px;
+  background: transparent;
   color: #777;
   font-size: 12px;
+  font-weight: 700;
+  cursor: pointer;
+  transition:
+    background 0.16s ease,
+    color 0.16s ease,
+    box-shadow 0.16s ease;
 }
 
-.activity-item > span {
-  padding: 6px 9px;
-  border-radius: 8px;
-  background: #e8f5e9;
+.deal-tab:hover {
+  color: #3f8f5b;
+}
+
+.deal-tab.active {
+  background: #ffffff;
   color: #2e7d32;
+  box-shadow: 0 2px 7px rgba(0, 0, 0, 0.08);
+}
+
+/* =========================================================
+   DEAL GRID
+   ========================================================= */
+
+.deals-grid {
+  display: grid;
+  grid-template-columns: repeat(2, minmax(0, 1fr));
+  gap: 12px;
+}
+
+/* =========================================================
+   DEAL CARDS
+   ========================================================= */
+
+.deal-card {
+  display: grid;
+  grid-template-columns: 52px minmax(0, 1fr);
+  gap: 12px;
+  padding: 15px;
+  border: 1px solid var(--border, #e8e8e8);
+  border-radius: 18px;
+  background: var(--card-bg, #fff);
+  box-shadow: 0 4px 14px rgba(0, 0, 0, 0.035);
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.deal-card:hover {
+  transform: translateY(-2px);
+  border-color: rgba(67, 160, 104, 0.25);
+  box-shadow: 0 8px 20px rgba(48, 94, 57, 0.07);
+}
+
+.deal-card > div:nth-child(2) {
+  min-width: 0;
+  align-self: center;
+}
+
+.deal-card strong {
+  display: block;
+  margin-bottom: 3px;
+  font-size: 14px;
+  line-height: 1.35;
+}
+
+.deal-card p {
+  margin: 0 0 6px;
+  color: var(--text-muted, #777);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.deal-card span {
+  font-size: 12px;
+  font-weight: 800;
+  color: var(--text-main, #17221a);
+}
+
+.deal-img {
+  width: 52px;
+  height: 52px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  border-radius: 15px;
+  background: #f4f7f4;
+  font-size: 24px;
+  grid-row: span 2;
+}
+
+/* Brand-specific soft backgrounds */
+
+.breadtalk-img {
+  background: #fff4df;
+}
+
+.chicha-img {
+  background: #eef8f2;
+}
+
+.mcd-img {
+  background: #fff0ed;
+}
+
+.cathay-img {
+  background: #eef1f8;
+}
+
+/* =========================================================
+   VIEW BUTTON
+   ========================================================= */
+
+.view-btn {
+  grid-column: 1 / -1;
+  width: 100%;
+  min-height: 36px;
+  padding: 9px 12px;
+  border: 0;
+  border-radius: 11px;
+  background: var(--text-main, #17221a);
+  color: var(--card-bg, #fff);
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+  transition:
+    transform 0.15s ease,
+    opacity 0.15s ease,
+    background 0.15s ease;
+}
+
+.view-btn:hover {
+  transform: translateY(-1px);
+  opacity: 0.92;
+}
+
+.view-btn:active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   MODAL
+   ========================================================= */
+
+.modal-overlay {
+  position: fixed;
+  inset: 0;
+  z-index: 1000;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  padding: 20px;
+  background: rgba(13, 20, 16, 0.42);
+  backdrop-filter: blur(4px);
+}
+
+.modal-card {
+  width: min(420px, 100%);
+  padding: 24px;
+  border: 1px solid rgba(255, 255, 255, 0.7);
+  border-radius: 22px;
+  background: var(--card-bg, #fff);
+  color: var(--text-main, #17221a);
+  box-shadow: 0 20px 50px rgba(0, 0, 0, 0.18);
+}
+
+.modal-card h2 {
+  margin: 0 0 8px;
+  font-size: 21px;
+}
+
+.modal-card p {
+  margin: 0 0 14px;
+  color: var(--text-muted, #777);
   font-size: 13px;
-  font-weight: 700;
+  line-height: 1.5;
+}
+
+.modal-card > strong {
+  display: inline-block;
+  margin-bottom: 20px;
+  color: #2e7d32;
+  font-size: 15px;
+}
+
+.modal-card > div {
+  display: flex;
+  gap: 9px;
+}
+
+.primary-btn,
+.secondary-btn {
+  flex: 1;
+  min-height: 40px;
+  padding: 9px 14px;
+  border-radius: 11px;
+  font-size: 12px;
+  font-weight: 750;
+  cursor: pointer;
+}
+
+.primary-btn {
+  border: 0;
+  background: #2e7d32;
+  color: white;
+}
+
+.secondary-btn {
+  border: 1px solid var(--border, #e4e4e4);
+  background: var(--card-bg, #fff);
+  color: var(--text-main, #17221a);
+}
+
+.primary-btn:hover,
+.secondary-btn:hover {
+  opacity: 0.9;
+}
+
+/* =========================================================
+   MOBILE
+   ========================================================= */
+
+@media (max-width: 700px) {
+  .rewards-page {
+    padding: 22px 16px 100px;
+  }
+
+  .rewards-page .purple-header h1,
+  .rewards-header h1 {
+    font-size: 27px;
+  }
+
+  .rewards-balance-card,
+  .points-card {
+    padding: 21px;
+    border-radius: 19px;
+  }
+
+  .balance-pts,
+  .points-value {
+    font-size: 40px;
+  }
+
+  .deals-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+@media (max-width: 420px) {
+  .rewards-card-top {
+    align-items: flex-start;
+  }
+
+  .rewards-card-badge {
+    font-size: 10px;
+    padding: 6px 8px;
+  }
+
+  .deals-tabs {
+    gap: 4px;
+  }
+
+  .deal-tab {
+    padding: 7px 8px;
+    font-size: 11px;
+  }
+
+  .activity-card,
+  .activity-item {
+    padding: 13px;
+  }
 }

@@ -1,15 +1,19 @@
 @import 'leaflet/dist/leaflet.css';
 
 :root {
-  --bg-color: #f1f5f9;
+  --bg-color: #f4f7f4;
   --card-bg: #ffffff;
-  --text-main: #0f172a;
-  --text-muted: #64748b;
-  --accent: #2563eb;
-  --border: #cbd5e1;
-  --green: #16a34a;
-  --red: #dc2626;
-  --yellow: #ca8a04;
+  --text-main: #17221a;
+  --text-muted: #718076;
+  --accent: #3f8f5b;
+  --accent-dark: #2e7d32;
+  --accent-soft: #eaf5ed;
+  --border: #e1e8e2;
+  --green: #3f8f5b;
+  --red: #dc5b5b;
+  --yellow: #c8942f;
+  --shadow-soft: 0 4px 16px rgba(34, 57, 40, 0.05);
+  --shadow-card: 0 7px 22px rgba(34, 57, 40, 0.07);
 }
 
 body.dark-theme {
@@ -18,15 +22,26 @@ body.dark-theme {
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
   --border: #1e293b;
+  --accent: #6fb985;
+  --accent-dark: #74bd89;
+  --accent-soft: rgba(111, 185, 133, 0.12);
 }
 
 body {
   margin: 0;
   background-color: #0b1329;
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+  font-family:
+    -apple-system,
+    BlinkMacSystemFont,
+    'Segoe UI',
+    Roboto,
+    sans-serif;
 }
 
-/* Fixed Global Mobile Container Width (Requirement 1) */
+/* =========================================================
+   APP CONTAINER
+   ========================================================= */
+
 .app-viewport {
   width: 100%;
   max-width: 430px;
@@ -47,7 +62,10 @@ body {
   box-sizing: border-box;
 }
 
-/* Auth / Login */
+/* =========================================================
+   AUTH / LOGIN
+   ========================================================= */
+
 .auth-viewport {
   justify-content: center;
   align-items: center;
@@ -63,8 +81,8 @@ body {
 }
 
 .brand-badge {
-  background: #dbeafe;
-  color: var(--accent);
+  background: #dbeee0;
+  color: var(--accent-dark);
   padding: 4px 12px;
   border-radius: 12px;
   font-weight: 700;
@@ -98,7 +116,10 @@ body {
   cursor: pointer;
 }
 
-/* Headers */
+/* =========================================================
+   HEADERS
+   ========================================================= */
+
 .page-header {
   display: flex;
   align-items: center;
@@ -137,10 +158,13 @@ body {
 .brand-title {
   font-size: 22px;
   font-weight: 800;
-  color: var(--accent);
+  color: var(--accent-dark);
 }
 
-/* Settings & Profile Cards (Consistent Width) */
+/* =========================================================
+   SETTINGS & PROFILE
+   ========================================================= */
+
 .profile-card {
   text-align: center;
   padding: 20px;
@@ -198,7 +222,10 @@ body {
   margin-top: 10px;
 }
 
-/* Rewards Section */
+/* =========================================================
+   REWARDS SHARED
+   ========================================================= */
+
 .rewards-balance-card {
   background: linear-gradient(135deg, #581c87, #3b0764);
   color: white;
@@ -276,10 +303,21 @@ body {
   margin-bottom: 8px;
 }
 
-.breadtalk-img { background: #d97706; }
-.chicha-img { background: #059669; }
-.mcd-img { background: #dc2626; }
-.cathay-img { background: #0284c7; }
+.breadtalk-img {
+  background: #d97706;
+}
+
+.chicha-img {
+  background: #059669;
+}
+
+.mcd-img {
+  background: #dc2626;
+}
+
+.cathay-img {
+  background: #0284c7;
+}
 
 .view-btn {
   color: #e11d48;
@@ -290,10 +328,16 @@ body {
   cursor: pointer;
 }
 
-/* Modals */
+/* =========================================================
+   MODALS
+   ========================================================= */
+
 .modal-overlay {
   position: fixed;
-  top: 0; left: 0; right: 0; bottom: 0;
+  top: 0;
+  left: 0;
+  right: 0;
+  bottom: 0;
   background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
@@ -323,7 +367,10 @@ body {
   letter-spacing: 4px;
 }
 
-.disruption-modal { text-align: left; }
+.disruption-modal {
+  text-align: left;
+}
+
 .disruption-item {
   background: var(--bg-color);
   padding: 10px;
@@ -332,8 +379,13 @@ body {
   border-left: 4px solid var(--red);
 }
 
-/* GPS Navigation Mode */
-.gps-viewport { background: #070d19; }
+/* =========================================================
+   GPS NAVIGATION MODE
+   ========================================================= */
+
+.gps-viewport {
+  background: #070d19;
+}
 
 .gps-banner {
   position: relative;
@@ -347,7 +399,9 @@ body {
   gap: 12px;
 }
 
-.gps-turn-arrow { font-size: 28px; }
+.gps-turn-arrow {
+  font-size: 28px;
+}
 
 .gps-map-frame {
   height: 280px;
@@ -372,7 +426,9 @@ body {
   margin-top: 12px;
 }
 
-.wide-btn { width: 100%; }
+.wide-btn {
+  width: 100%;
+}
 
 .primary-btn {
   background: var(--accent);
@@ -384,7 +440,9 @@ body {
   cursor: pointer;
 }
 
-.finish-btn { background: var(--green); }
+.finish-btn {
+  background: var(--green);
+}
 
 .secondary-btn {
   background: var(--bg-color);
@@ -395,7 +453,10 @@ body {
   cursor: pointer;
 }
 
-/* Home Dashboard Elements */
+/* =========================================================
+   HOME DASHBOARD
+   ========================================================= */
+
 .top-status-pill {
   background: #0f172a;
   color: white;
@@ -408,9 +469,13 @@ body {
   cursor: pointer;
 }
 
-.live-dot { color: #ef4444; }
+.live-dot {
+  color: #ef4444;
+}
 
-.search-section { padding: 12px 16px; }
+.search-section {
+  padding: 12px 16px;
+}
 
 .search-bar {
   display: flex;
@@ -470,7 +535,9 @@ body {
 
 .map-card-overlay {
   position: absolute;
-  bottom: 12px; left: 12px; right: 12px;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
   background: rgba(255, 255, 255, 0.95);
   color: black;
   padding: 12px;
@@ -498,4 +565,543 @@ body {
   cursor: pointer;
 }
 
-.nav-item.active { color: var(--accent); }
+.nav-item.active {
+  color: var(--accent);
+}
+
+/* =========================================================
+   FLOWSG — DIRECTIONS PAGE
+   UI ONLY
+   ========================================================= */
+
+.directions-page {
+  background:
+    linear-gradient(
+      180deg,
+      #f4f8f5 0%,
+      var(--bg-color) 42%,
+      var(--bg-color) 100%
+    );
+  min-height: 100%;
+}
+
+.directions-page .simple-header {
+  display: flex;
+  align-items: center;
+  padding: 18px 20px 14px;
+  background: transparent;
+  border-bottom: none;
+}
+
+.directions-page .brand-title {
+  font-size: 23px;
+  letter-spacing: -0.5px;
+  color: var(--accent-dark);
+}
+
+/* Main content */
+
+.directions-page .directions-content {
+  padding: 8px 18px 110px;
+}
+
+.directions-page .directions-content > h2 {
+  margin: 8px 2px 5px;
+  font-size: 27px;
+  line-height: 1.15;
+  letter-spacing: -0.7px;
+  color: var(--text-main);
+}
+
+.directions-page .directions-content > p {
+  margin: 0 2px 22px;
+  color: var(--text-muted);
+  font-size: 13px;
+  line-height: 1.5;
+}
+
+/* =========================================================
+   LOCATION INPUTS
+   ========================================================= */
+
+.directions-page .location-input,
+.directions-page .arrival-option {
+  margin-bottom: 12px;
+}
+
+.directions-page .location-input label,
+.directions-page .arrival-option label {
+  display: block;
+  margin: 0 0 6px 3px;
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 750;
+}
+
+.directions-page .location-input input,
+.directions-page .arrival-option select {
+  width: 100%;
+  min-height: 48px;
+  box-sizing: border-box;
+  padding: 12px 14px;
+  border: 1px solid var(--border);
+  border-radius: 15px;
+  outline: none;
+  background: var(--card-bg);
+  color: var(--text-main);
+  font-family: inherit;
+  font-size: 14px;
+  box-shadow: var(--shadow-soft);
+  transition:
+    border-color 0.15s ease,
+    box-shadow 0.15s ease,
+    background 0.15s ease;
+}
+
+.directions-page .location-input input::placeholder {
+  color: #9aa69e;
+}
+
+.directions-page .location-input input:focus,
+.directions-page .arrival-option select:focus {
+  border-color: rgba(63, 143, 91, 0.55);
+  box-shadow:
+    0 0 0 3px rgba(63, 143, 91, 0.09),
+    var(--shadow-soft);
+}
+
+/* =========================================================
+   SWAP BUTTON
+   ========================================================= */
+
+.directions-page .swap-button {
+  display: block;
+  margin: -3px auto 10px;
+  padding: 7px 12px;
+  border: 1px solid var(--border);
+  border-radius: 999px;
+  background: var(--card-bg);
+  color: var(--accent-dark);
+  font-family: inherit;
+  font-size: 11px;
+  font-weight: 750;
+  cursor: pointer;
+  box-shadow: 0 2px 8px rgba(34, 57, 40, 0.04);
+  transition:
+    transform 0.15s ease,
+    background 0.15s ease,
+    border-color 0.15s ease;
+}
+
+.directions-page .swap-button:hover {
+  transform: translateY(-1px);
+  background: var(--accent-soft);
+  border-color: rgba(63, 143, 91, 0.25);
+}
+
+.directions-page .swap-button:active {
+  transform: translateY(0);
+}
+
+/* =========================================================
+   ARRIVAL SELECT
+   ========================================================= */
+
+.directions-page .arrival-option select {
+  appearance: auto;
+  cursor: pointer;
+}
+
+/* =========================================================
+   FIND ROUTES BUTTON
+   ========================================================= */
+
+.directions-page .find-route-button {
+  width: 100%;
+  min-height: 49px;
+  margin-top: 5px;
+  padding: 12px 16px;
+  border: none;
+  border-radius: 15px;
+  background: linear-gradient(135deg, #3f8f5b, #32794a);
+  color: white;
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 800;
+  letter-spacing: 0.1px;
+  cursor: pointer;
+  box-shadow: 0 7px 17px rgba(63, 143, 91, 0.2);
+  transition:
+    transform 0.15s ease,
+    box-shadow 0.15s ease,
+    opacity 0.15s ease;
+}
+
+.directions-page .find-route-button:hover {
+  transform: translateY(-1px);
+  box-shadow: 0 9px 21px rgba(63, 143, 91, 0.24);
+}
+
+.directions-page .find-route-button:active {
+  transform: translateY(0);
+}
+
+.directions-page .find-route-button:disabled {
+  cursor: wait;
+  opacity: 0.65;
+  transform: none;
+}
+
+/* =========================================================
+   ERROR
+   ========================================================= */
+
+.directions-page .route-error {
+  margin: 12px 0;
+  padding: 11px 13px;
+  border: 1px solid rgba(220, 91, 91, 0.2);
+  border-radius: 13px;
+  background: rgba(220, 91, 91, 0.08);
+  color: #b64646;
+  font-size: 12px;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   ROUTE RESULTS
+   ========================================================= */
+
+.directions-page .route-results {
+  margin-top: 30px;
+}
+
+.directions-page .route-results > h2,
+.directions-page .directions-map > h2 {
+  margin: 0 0 6px 2px;
+  font-size: 19px;
+  letter-spacing: -0.25px;
+}
+
+.directions-page .demo-label {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 12px 2px;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: rgba(63, 143, 91, 0.08);
+  color: #55805f;
+  font-size: 10px;
+  font-weight: 700;
+}
+
+/* Preference display */
+
+.directions-page .preference-display {
+  margin-bottom: 14px;
+  padding: 11px 13px;
+  border: 1px solid rgba(63, 143, 91, 0.14);
+  border-radius: 14px;
+  background: #edf6ef;
+  color: #577060;
+  font-size: 12px;
+}
+
+.directions-page .preference-display strong {
+  color: #2f7044;
+}
+
+/* =========================================================
+   ROUTE CARD
+   ========================================================= */
+
+.directions-page .route-card {
+  position: relative;
+  padding: 17px;
+  margin-bottom: 12px;
+  border: 1px solid var(--border);
+  border-radius: 19px;
+  background: var(--card-bg);
+  box-shadow: var(--shadow-soft);
+  cursor: pointer;
+  transition:
+    transform 0.16s ease,
+    border-color 0.16s ease,
+    box-shadow 0.16s ease;
+}
+
+.directions-page .route-card:hover {
+  transform: translateY(-1px);
+  border-color: rgba(63, 143, 91, 0.24);
+  box-shadow: var(--shadow-card);
+}
+
+.directions-page .route-card.selected {
+  border-color: rgba(63, 143, 91, 0.55);
+  box-shadow:
+    0 0 0 2px rgba(63, 143, 91, 0.08),
+    0 8px 22px rgba(34, 57, 40, 0.08);
+}
+
+/* =========================================================
+   CROWDING STATUS
+   ========================================================= */
+
+.directions-page .route-status {
+  margin-bottom: 11px;
+  font-size: 11px;
+  font-weight: 750;
+}
+
+.directions-page .route-status span {
+  display: inline-flex;
+  align-items: center;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #f2f4f2;
+  color: #7a847d;
+}
+
+.directions-page .route-status .status-good {
+  background: rgba(63, 143, 91, 0.1);
+  color: #3f8f5b;
+}
+
+.directions-page .route-status .status-warning {
+  background: rgba(202, 148, 47, 0.11);
+  color: #9a7121;
+}
+
+.directions-page .route-status .status-warning:has(+ *) {
+  color: #9a7121;
+}
+
+/* =========================================================
+   DISRUPTION
+   ========================================================= */
+
+.directions-page .route-disruption {
+  margin-bottom: 12px;
+  padding: 10px 11px;
+  border-left: 3px solid #d88b32;
+  border-radius: 10px;
+  background: #fff7e9;
+  color: #8b6427;
+  font-size: 11px;
+  line-height: 1.45;
+}
+
+/* =========================================================
+   ROUTE HEADER
+   ========================================================= */
+
+.directions-page .route-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: 10px;
+  margin-bottom: 7px;
+}
+
+.directions-page .route-header strong {
+  font-size: 15px;
+  color: var(--text-main);
+}
+
+.directions-page .route-header > span:not(.recommended-badge) {
+  color: var(--text-muted);
+  font-size: 11px;
+}
+
+.directions-page .recommended-badge {
+  flex-shrink: 0;
+  padding: 6px 9px;
+  border-radius: 999px;
+  background: #e7f4ea;
+  color: #34794a;
+  font-size: 10px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   ROUTE REASON
+   ========================================================= */
+
+.directions-page .route-reason {
+  margin: 0 0 10px;
+  color: #4d875d;
+  font-size: 11px;
+  font-weight: 650;
+  line-height: 1.4;
+}
+
+/* =========================================================
+   REWARD POINTS
+   ========================================================= */
+
+.directions-page .route-reward {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 0 11px;
+  padding: 7px 10px;
+  border-radius: 999px;
+  background: #fff8df;
+  color: #8b6c25;
+  font-size: 11px;
+  font-weight: 800;
+}
+
+/* =========================================================
+   ROUTE TRANSPORT / TIME
+   ========================================================= */
+
+.directions-page .route-card > p:not(.route-time):not(.route-reason):not(.route-benefit) {
+  margin: 7px 0;
+  color: var(--text-muted);
+  font-size: 12px;
+  line-height: 1.4;
+}
+
+.directions-page .route-time {
+  margin: 5px 0 14px;
+  color: var(--text-main);
+  font-size: 12px;
+  font-weight: 650;
+}
+
+/* =========================================================
+   ROUTE INFO
+   ========================================================= */
+
+.directions-page .route-info {
+  display: grid;
+  grid-template-columns: repeat(3, 1fr);
+  gap: 7px;
+  margin-top: 10px;
+}
+
+.directions-page .route-info > div {
+  padding: 11px 8px;
+  border-radius: 13px;
+  background: #f5f7f5;
+  text-align: center;
+}
+
+.directions-page .route-info strong {
+  display: block;
+  margin-bottom: 3px;
+  color: var(--text-main);
+  font-size: 13px;
+  line-height: 1.2;
+}
+
+.directions-page .route-info small {
+  display: block;
+  color: var(--text-muted);
+  font-size: 9px;
+  line-height: 1.2;
+}
+
+/* =========================================================
+   ROUTE BENEFIT
+   ========================================================= */
+
+.directions-page .route-benefit {
+  margin: 12px 0 0;
+  padding-top: 10px;
+  border-top: 1px solid var(--border);
+  color: #4f7f5b;
+  font-size: 11px;
+  font-weight: 650;
+}
+
+/* =========================================================
+   SELECTED ROUTE
+   ========================================================= */
+
+.directions-page .selected-route {
+  margin-top: 14px;
+  padding: 17px;
+  border: 1px solid rgba(63, 143, 91, 0.18);
+  border-radius: 18px;
+  background: linear-gradient(
+    135deg,
+    #eef7f0,
+    #f7faf7
+  );
+  box-shadow: var(--shadow-soft);
+}
+
+.directions-page .selected-route > strong {
+  display: block;
+  margin-bottom: 13px;
+  color: #327447;
+  font-size: 13px;
+}
+
+.directions-page .journey-breakdown {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 8px;
+}
+
+.directions-page .journey-breakdown p {
+  margin: 0;
+  padding: 9px 10px;
+  border-radius: 11px;
+  background: rgba(255, 255, 255, 0.75);
+  color: #617166;
+  font-size: 11px;
+}
+
+/* =========================================================
+   ROUTE MAP
+   ========================================================= */
+
+.directions-page .directions-map {
+  margin-top: 28px;
+}
+
+.directions-page .directions-map > div {
+  margin-top: 12px;
+  overflow: hidden;
+  border: 1px solid var(--border);
+  border-radius: 19px;
+  box-shadow: var(--shadow-card);
+}
+
+/* =========================================================
+   RESPONSIVE DIRECTIONS
+   ========================================================= */
+
+@media (max-width: 430px) {
+  .directions-page .directions-content {
+    padding-left: 16px;
+    padding-right: 16px;
+  }
+
+  .directions-page .directions-content > h2 {
+    font-size: 25px;
+  }
+
+  .directions-page .route-card {
+    padding: 15px;
+  }
+}
+
+@media (max-width: 360px) {
+  .directions-page .route-info {
+    gap: 5px;
+  }
+
+  .directions-page .route-info > div {
+    padding: 9px 5px;
+  }
+
+  .directions-page .journey-breakdown {
+    grid-template-columns: 1fr;
+  }
+
+  .directions-page .route-header {
+    align-items: flex-start;
+  }
+}
