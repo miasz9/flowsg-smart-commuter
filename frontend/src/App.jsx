@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 import './App.css';
 
-// Fix for default Leaflet marker icons in React
+// Fix default Leaflet marker assets in React
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -11,7 +11,7 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// Translation dictionary for full UI localization
+// Full Translation Dictionary including Route Preferences
 const TRANSLATIONS = {
   English: {
     home: 'Home',
@@ -28,6 +28,10 @@ const TRANSLATIONS = {
     signOut: 'Sign Out',
     liveUpdates: 'Live · 14:32 East-West Line: partial delay',
     disruptions: '3 disruptions',
+    prefFastest: 'Fastest',
+    prefLeastCrowded: 'Least Crowded',
+    prefSheltered: 'Sheltered',
+    prefAccessible: 'Accessible',
   },
   'Bahasa Melayu': {
     home: 'Utama',
@@ -44,6 +48,10 @@ const TRANSLATIONS = {
     signOut: 'Log Keluar',
     liveUpdates: 'Langsung · 14:32 Laluan East-West: gangguan separa',
     disruptions: '3 gangguan',
+    prefFastest: 'Terpantas',
+    prefLeastCrowded: 'Kurang Sesak',
+    prefSheltered: 'Berbumbung',
+    prefAccessible: 'Bebas Halangan',
   },
   Chinese: {
     home: '首页',
@@ -60,6 +68,10 @@ const TRANSLATIONS = {
     signOut: '退出登录',
     liveUpdates: '实时 · 14:32 东西线：部分延迟',
     disruptions: '3条中断信息',
+    prefFastest: '最快路线',
+    prefLeastCrowded: '最少拥挤',
+    prefSheltered: '全全程遮阳遮雨',
+    prefAccessible: '无障碍通行',
   },
   Tamil: {
     home: 'முகப்பு',
@@ -76,10 +88,14 @@ const TRANSLATIONS = {
     signOut: 'வெளியேறு',
     liveUpdates: 'நேரலை · 14:32 கிழக்கு-மேற்கு பாதை: தாமதம்',
     disruptions: '3 இடையூறுகள்',
+    prefFastest: 'வேகமான பாதை',
+    prefLeastCrowded: 'கூட்டம் குறைவானது',
+    prefSheltered: 'நிழல் பாதை',
+    prefAccessible: 'எளிதாக அணுகக்கூடியது',
   },
 };
 
-// Destination-Specific Mock Routes
+// Default Route Data Sets
 const SCHOOL_ROUTES = [
   {
     id: 'nus-dtl',
@@ -109,6 +125,35 @@ const SCHOOL_ROUTES = [
   },
 ];
 
+const WOODLANDS_ROUTES = [
+  {
+    id: 'woodlands-nsl',
+    title: '⭐️ North-South Line Direct',
+    destination: 'Woodlands Integrated Hub',
+    time: '45 min',
+    distance: '21.4 km',
+    points: 25,
+    crowding: 'Low Crowded',
+    crowdingLevel: 'green',
+    walkTime: '3 min fully sheltered link',
+    timeDelta: 'Direct express train via NSL',
+    path: [[1.2966, 103.8501], [1.3500, 103.8300], [1.4360, 103.7860]],
+  },
+  {
+    id: 'woodlands-tel',
+    title: '☂️ Thomson-East Coast Line Loop',
+    destination: 'Woodlands South / Civic Centre',
+    time: '52 min',
+    distance: '23.1 km',
+    points: 35,
+    crowding: 'Least Crowded',
+    crowdingLevel: 'green',
+    walkTime: '2 min underground transfer',
+    timeDelta: 'Avoids EWL Signal Fault • +35 Bonus Points',
+    path: [[1.2966, 103.8501], [1.3800, 103.8100], [1.4360, 103.7860]],
+  },
+];
+
 const DOWNTOWN_ROUTES = [
   {
     id: 'guoco-ewl',
@@ -123,19 +168,6 @@ const DOWNTOWN_ROUTES = [
     timeDelta: 'Fastest route to Central Business District',
     path: [[1.2966, 103.8501], [1.2820, 103.8440], [1.2764, 103.8446]],
   },
-  {
-    id: 'guoco-tel',
-    title: '☂️ Sheltered TEL Extension',
-    destination: 'Guoco Tower (Tanjong Pagar)',
-    time: '32 min',
-    distance: '9.1 km',
-    points: 25,
-    crowding: 'Least Crowded',
-    crowdingLevel: 'green',
-    walkTime: '5 min fully sheltered',
-    timeDelta: '100% rain sheltered path • +25 Points',
-    path: [[1.2966, 103.8501], [1.2800, 103.8500], [1.2764, 103.8446]],
-  },
 ];
 
 const DEALS_CATALOG = [
@@ -143,7 +175,6 @@ const DEALS_CATALOG = [
   { id: 2, merchant: 'ChiCha San Chen', title: 'S$2.00 off Fresh Taro Boba', category: 'dine', deadline: 'Redeem by 15 Nov 2026', terms: 'Valid with 100 FlowSG points.', imgClass: 'chicha-img' },
   { id: 3, merchant: "McDonald's", title: 'Free Medium Fries with Meal', category: 'featured', deadline: 'Redeem by 28 Oct 2026', terms: 'Scan FlowSG QR code at checkout.', imgClass: 'mcd-img' },
   { id: 4, merchant: 'Cathay Pacific', title: '50% off flight bookings', category: 'featured', deadline: 'Redeem by 31 Dec 2026', terms: 'Exclusive to FlowSG pass holders.', imgClass: 'cathay-img' },
-  { id: 5, merchant: 'KKday', title: 'Up to S$350 off attractions', category: 'nearby', deadline: 'Redeem by 20 Nov 2026', terms: 'Includes Sentosa Luge & Haw Par Villa.', imgClass: 'kkday-img' },
 ];
 
 const GPS_STEPS = [
@@ -164,7 +195,7 @@ export default function App() {
   const [currentScreen, setCurrentScreen] = useState('home');
   const [activeTab, setActiveTab] = useState('home');
 
-  // Search & Navigation
+  // Search & Dynamic Route Engine
   const [searchQuery, setSearchQuery] = useState('');
   const [activeRouteSet, setActiveRouteSet] = useState(SCHOOL_ROUTES);
   const [selectedRoute, setSelectedRoute] = useState(SCHOOL_ROUTES[0]);
@@ -177,15 +208,15 @@ export default function App() {
   const [dealFilter, setDealFilter] = useState('all');
   const [pointsBalance, setPointsBalance] = useState(1260);
 
-  // User Profile Preferences with fixed capitalization
+  // User Profile Preferences
   const [userProfile, setUserProfile] = useState({
     language: 'English',
     darkMode: true,
     preferences: {
-      Fastest: true,
-      'Least Crowded': true,
-      Sheltered: true,
-      Accessible: false,
+      prefFastest: true,
+      prefLeastCrowded: true,
+      prefSheltered: true,
+      prefAccessible: false,
     },
   });
 
@@ -206,14 +237,51 @@ export default function App() {
     if (tab === 'me') setCurrentScreen('me');
   };
 
+  // Requirement 3: Dynamic Destination Routing (Woodlands, Downtown, Custom)
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.toLowerCase().includes('downtown') || searchQuery.toLowerCase().includes('guoco')) {
+    const query = searchQuery.trim().toLowerCase();
+    
+    if (query === '') return;
+
+    if (query.includes('woodland')) {
+      setActiveRouteSet(WOODLANDS_ROUTES);
+      setSelectedRoute(WOODLANDS_ROUTES[0]);
+    } else if (query.includes('downtown') || query.includes('guoco')) {
       setActiveRouteSet(DOWNTOWN_ROUTES);
       setSelectedRoute(DOWNTOWN_ROUTES[0]);
     } else {
-      setActiveRouteSet(SCHOOL_ROUTES);
-      setSelectedRoute(SCHOOL_ROUTES[0]);
+      // Custom dynamic destination generator
+      const customRoutes = [
+        {
+          id: 'custom-1',
+          title: `⭐️ Express Route to ${searchQuery}`,
+          destination: searchQuery,
+          time: '35 min',
+          distance: '12.4 km',
+          points: 20,
+          crowding: 'Low Crowded',
+          crowdingLevel: 'green',
+          walkTime: '5 min walking',
+          timeDelta: 'Optimal direct route via MRT',
+          path: [[1.2966, 103.8501], [1.3200, 103.8200], [1.3500, 103.8000]],
+        },
+        {
+          id: 'custom-2',
+          title: `🌿 Sheltered & Quiet Route to ${searchQuery}`,
+          destination: searchQuery,
+          time: '42 min',
+          distance: '13.8 km',
+          points: 30,
+          crowding: 'Least Crowded',
+          crowdingLevel: 'green',
+          walkTime: '3 min sheltered',
+          timeDelta: '7 min slower • +30 Bonus Points',
+          path: [[1.2966, 103.8501], [1.3100, 103.8300], [1.3500, 103.8000]],
+        },
+      ];
+      setActiveRouteSet(customRoutes);
+      setSelectedRoute(customRoutes[0]);
     }
     setCurrentScreen('routes');
   };
@@ -223,6 +291,10 @@ export default function App() {
       setSearchQuery('NUS Kent Ridge');
       setActiveRouteSet(SCHOOL_ROUTES);
       setSelectedRoute(SCHOOL_ROUTES[0]);
+    } else if (type === 'woodlands') {
+      setSearchQuery('Woodlands Integrated Hub');
+      setActiveRouteSet(WOODLANDS_ROUTES);
+      setSelectedRoute(WOODLANDS_ROUTES[0]);
     } else {
       setSearchQuery('Guoco Tower (Downtown)');
       setActiveRouteSet(DOWNTOWN_ROUTES);
@@ -299,7 +371,7 @@ export default function App() {
   }
 
   // --------------------------------------------------------------------------
-  // ME PAGE / USER PREFERENCES & SIGN OUT
+  // ME PAGE / PROFILE & FULL TRANSLATION (Requirement 1 & 2)
   // --------------------------------------------------------------------------
   if (currentScreen === 'me') {
     return (
@@ -343,20 +415,21 @@ export default function App() {
             </div>
           </section>
 
+          {/* Fully Translated Preferences (Requirement 2) */}
           <section className="settings-group">
             <h4>{t.yourPreferences}</h4>
-            {Object.keys(userProfile.preferences).map((pref) => (
-              <div className="setting-row" key={pref}>
-                <span>{pref}</span>
+            {['prefFastest', 'prefLeastCrowded', 'prefSheltered', 'prefAccessible'].map((prefKey) => (
+              <div className="setting-row" key={prefKey}>
+                <span>{t[prefKey]}</span>
                 <input
                   type="checkbox"
-                  checked={userProfile.preferences[pref]}
+                  checked={userProfile.preferences[prefKey]}
                   onChange={(e) =>
                     setUserProfile({
                       ...userProfile,
                       preferences: {
                         ...userProfile.preferences,
-                        [pref]: e.target.checked,
+                        [prefKey]: e.target.checked,
                       },
                     })
                   }
@@ -467,7 +540,7 @@ export default function App() {
   }
 
   // --------------------------------------------------------------------------
-  // ROUTE OPTIONS SCREEN (Opened via Directions tab or Search)
+  // ROUTE OPTIONS SCREEN
   // --------------------------------------------------------------------------
   if (currentScreen === 'routes') {
     return (
@@ -514,12 +587,11 @@ export default function App() {
   }
 
   // --------------------------------------------------------------------------
-  // GPS NAVIGATION FRAME (With dedicated OpenStreetMap Canvas)
+  // GPS NAVIGATION FRAME
   // --------------------------------------------------------------------------
   if (currentScreen === 'gps') {
     return (
       <div className="app-viewport gps-viewport">
-        {/* Top Green Direction Banner */}
         <div className="gps-banner">
           <div className="gps-turn-arrow">↱</div>
           <div>
@@ -528,7 +600,6 @@ export default function App() {
           </div>
         </div>
 
-        {/* Dedicated GPS Map Frame */}
         <div className="gps-map-frame">
           <MapContainer
             center={[1.2930, 103.8520]}
@@ -547,7 +618,6 @@ export default function App() {
           </MapContainer>
         </div>
 
-        {/* Bottom Navigation Control Drawer */}
         <div className="gps-drawer">
           <div className="gps-info-row">
             <div>
@@ -595,12 +665,11 @@ export default function App() {
         <span className="status-count">{t.disruptions} ℹ️</span>
       </div>
 
-      {/* Brand Header */}
       <header className="app-header simple-header">
         <div className="brand-title">FlowSG</div>
       </header>
 
-      {/* Main Search Input */}
+      {/* Main Search Bar (Supports Woodlands & Custom Destinations) */}
       <section className="search-section">
         <h2>{t.headingQuestion}</h2>
         <form onSubmit={handleSearchSubmit} className="search-bar">
@@ -615,8 +684,9 @@ export default function App() {
         </form>
 
         <div className="quick-pills">
-          <button onClick={() => handleQuickSelect('school')}>Home → School (NUS)</button>
-          <button onClick={() => handleQuickSelect('downtown')}>Morning to Downtown (Guoco Tower)</button>
+          <button onClick={() => handleQuickSelect('school')}>NUS Kent Ridge</button>
+          <button onClick={() => handleQuickSelect('woodlands')}>Woodlands Hub</button>
+          <button onClick={() => handleQuickSelect('downtown')}>Guoco Tower</button>
         </div>
       </section>
 
@@ -636,7 +706,6 @@ export default function App() {
           <Polyline positions={SCHOOL_ROUTES[0].path} color="#2563eb" weight={5} />
         </MapContainer>
 
-        {/* Clicking recommended route on home leads directly to GPS */}
         <div className="map-card-overlay" onClick={() => handleStartGPS(SCHOOL_ROUTES[0])}>
           <span className="badge-tag">RECOMMENDED · LESS CROWDED</span>
           <h4>18 min • 3.2 km</h4>
@@ -644,7 +713,7 @@ export default function App() {
         </div>
       </section>
 
-      {/* Live Disruptions & Exit Closures Modal */}
+      {/* Live Disruptions Modal */}
       {showDisruptionModal && (
         <div className="modal-overlay">
           <div className="modal-card disruption-modal">
@@ -668,7 +737,7 @@ export default function App() {
         </div>
       )}
 
-      {/* Sticky Bottom Navigation Bar */}
+      {/* Sticky Bottom Navigation */}
       <nav className="bottom-navigation">
         <button
           className={activeTab === 'home' ? 'nav-item active' : 'nav-item'}

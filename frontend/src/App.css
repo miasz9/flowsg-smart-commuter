@@ -26,7 +26,9 @@ body {
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
+/* Fixed Global Mobile Container Width (Requirement 1) */
 .app-viewport {
+  width: 100%;
   max-width: 430px;
   margin: 0 auto;
   min-height: 100vh;
@@ -35,7 +37,14 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  box-sizing: border-box;
   box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
+}
+
+.page-content {
+  padding: 16px;
+  flex: 1;
+  box-sizing: border-box;
 }
 
 /* Auth / Login */
@@ -131,13 +140,14 @@ body {
   color: var(--accent);
 }
 
-/* Profile / Settings */
+/* Settings & Profile Cards (Consistent Width) */
 .profile-card {
   text-align: center;
   padding: 20px;
   background: var(--card-bg);
   border-radius: 16px;
   margin-bottom: 16px;
+  box-sizing: border-box;
 }
 
 .avatar-circle {
@@ -158,6 +168,7 @@ body {
   padding: 16px;
   border-radius: 16px;
   margin-bottom: 16px;
+  box-sizing: border-box;
 }
 
 .setting-row {
@@ -194,6 +205,7 @@ body {
   padding: 20px;
   border-radius: 20px;
   margin-bottom: 16px;
+  box-sizing: border-box;
 }
 
 .rewards-card-top {
@@ -249,6 +261,7 @@ body {
   border-radius: 14px;
   padding: 10px;
   border: 1px solid var(--border);
+  box-sizing: border-box;
 }
 
 .deal-img {
@@ -267,7 +280,6 @@ body {
 .chicha-img { background: #059669; }
 .mcd-img { background: #dc2626; }
 .cathay-img { background: #0284c7; }
-.kkday-img { background: #0d9488; }
 
 .view-btn {
   color: #e11d48;
@@ -298,6 +310,7 @@ body {
   max-width: 360px;
   text-align: center;
   color: var(--text-main);
+  box-sizing: border-box;
 }
 
 .barcode-box {
@@ -319,7 +332,7 @@ body {
   border-left: 4px solid var(--red);
 }
 
-/* GPS Viewport with Map Canvas */
+/* GPS Navigation Mode */
 .gps-viewport { background: #070d19; }
 
 .gps-banner {
@@ -349,6 +362,7 @@ body {
   border-top-right-radius: 20px;
   padding: 20px;
   margin-top: auto;
+  box-sizing: border-box;
 }
 
 .gps-button-group {
