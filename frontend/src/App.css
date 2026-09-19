@@ -1,28 +1,28 @@
 @import 'leaflet/dist/leaflet.css';
 
 :root {
-  --bg-color: #f3f6f9;
+  --bg-color: #f1f5f9;
   --card-bg: #ffffff;
   --text-main: #0f172a;
   --text-muted: #64748b;
   --accent: #2563eb;
-  --border: #e2e8f0;
+  --border: #cbd5e1;
   --green: #16a34a;
   --red: #dc2626;
   --yellow: #ca8a04;
 }
 
 body.dark-theme {
-  --bg-color: #0f172a;
-  --card-bg: #1e293b;
+  --bg-color: #0b1329;
+  --card-bg: #131f37;
   --text-main: #f8fafc;
   --text-muted: #94a3b8;
-  --border: #334155;
+  --border: #1e293b;
 }
 
 body {
   margin: 0;
-  background-color: #cbd5e1;
+  background-color: #1e293b;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -35,10 +35,60 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-/* Headers & Home Buttons */
+/* Auth / Login */
+.auth-viewport {
+  justify-content: center;
+  align-items: center;
+  padding: 20px;
+}
+
+.auth-card {
+  background: var(--card-bg);
+  padding: 24px;
+  border-radius: 20px;
+  width: 100%;
+  box-sizing: border-box;
+}
+
+.brand-badge {
+  background: #dbeafe;
+  color: var(--accent);
+  padding: 4px 12px;
+  border-radius: 12px;
+  font-weight: 700;
+  font-size: 12px;
+}
+
+.auth-form {
+  display: flex;
+  flex-direction: column;
+  gap: 12px;
+  margin-top: 16px;
+}
+
+.auth-form input {
+  padding: 12px;
+  border: 1px solid var(--border);
+  border-radius: 10px;
+  background: var(--bg-color);
+  color: var(--text-main);
+}
+
+.auth-toggle {
+  text-align: center;
+  margin-top: 16px;
+  font-size: 13px;
+}
+
+.auth-toggle span {
+  color: var(--accent);
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* Headers */
 .page-header {
   display: flex;
   align-items: center;
@@ -49,7 +99,7 @@ body {
 }
 
 .purple-header {
-  background: #4c1d95;
+  background: #3b0764;
   color: white;
 }
 
@@ -69,12 +119,18 @@ body {
   border: none;
 }
 
-.page-content {
+.simple-header {
   padding: 16px;
-  flex: 1;
+  background: var(--card-bg);
 }
 
-/* User Settings / Me Screen */
+.brand-title {
+  font-size: 20px;
+  font-weight: 800;
+  color: var(--accent);
+}
+
+/* User Settings / Profile */
 .profile-card {
   text-align: center;
   padding: 20px;
@@ -83,7 +139,7 @@ body {
   margin-bottom: 16px;
 }
 
-.profile-avatar {
+.avatar-circle {
   width: 50px;
   height: 50px;
   background: var(--accent);
@@ -111,13 +167,9 @@ body {
   border-bottom: 1px solid var(--border);
 }
 
-.capitalize {
-  text-transform: capitalize;
-}
-
-/* Rewards Screen */
+/* Rewards Section */
 .rewards-balance-card {
-  background: linear-gradient(135deg, #6d28d9, #4c1d95);
+  background: linear-gradient(135deg, #581c87, #3b0764);
   color: white;
   padding: 20px;
   border-radius: 20px;
@@ -133,46 +185,43 @@ body {
 .balance-pts {
   font-size: 28px;
   font-weight: 800;
-  margin: 4px 0 0 0;
+  margin-top: 4px;
 }
 
 .rewards-card-badge {
   background: white;
-  color: #6d28d9;
+  color: #581c87;
   border: none;
   padding: 8px 14px;
   border-radius: 20px;
   font-weight: 700;
+  cursor: pointer;
 }
 
-.rewards-banner-note {
-  margin-top: 16px;
-  background: rgba(255, 255, 255, 0.15);
-  padding: 10px;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
-.history-item {
+.deals-tabs {
   display: flex;
-  justify-content: space-between;
+  gap: 8px;
+  margin-bottom: 12px;
+}
+
+.deal-tab {
   background: var(--card-bg);
-  padding: 12px;
-  border-radius: 12px;
-  margin-top: 8px;
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 6px 14px;
+  border-radius: 16px;
+  cursor: pointer;
 }
 
-.pts-earned {
-  color: var(--green);
-  font-weight: 700;
+.deal-tab.active {
+  background: var(--accent);
+  color: white;
 }
 
-/* Deals Grid (DBS Style) */
 .deals-grid {
   display: grid;
   grid-template-columns: 1fr 1fr;
   gap: 12px;
-  margin-top: 12px;
 }
 
 .deal-card {
@@ -183,16 +232,20 @@ body {
 }
 
 .deal-img {
-  height: 80px;
+  height: 70px;
   border-radius: 8px;
   display: flex;
   align-items: center;
   justify-content: center;
   color: white;
   font-weight: 700;
+  font-size: 12px;
   margin-bottom: 8px;
 }
 
+.breadtalk-img { background: #d97706; }
+.chicha-img { background: #059669; }
+.mcd-img { background: #dc2626; }
 .cathay-img { background: #0284c7; }
 .kkday-img { background: #0d9488; }
 
@@ -205,67 +258,88 @@ body {
   cursor: pointer;
 }
 
-/* Recommendation Detail Frame */
-.recommendation-card {
-  background: var(--card-bg);
-  border: 2px solid var(--accent);
-  border-radius: 20px;
-  padding: 20px;
-  margin-top: 12px;
-}
-
-.rec-metrics {
+/* Modal Overlay */
+.modal-overlay {
+  position: fixed;
+  top: 0; left: 0; right: 0; bottom: 0;
+  background: rgba(0, 0, 0, 0.7);
   display: flex;
-  justify-content: space-between;
   align-items: center;
-  margin: 12px 0;
+  justify-content: center;
+  z-index: 2000;
+  padding: 20px;
 }
 
-.main-time {
-  font-size: 32px;
-  font-weight: 800;
+.modal-card {
+  background: var(--card-bg);
+  padding: 24px;
+  border-radius: 20px;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
 }
 
-.pts-tag {
+.barcode-box {
+  background: #f8fafc;
+  color: black;
+  padding: 16px;
+  border-radius: 12px;
+  margin: 16px 0;
+  font-family: monospace;
+  letter-spacing: 4px;
+}
+
+/* Route Comparison Frame */
+.route-comparison-card {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  border-radius: 16px;
+  padding: 16px;
+  margin-bottom: 12px;
+}
+
+.pts-badge {
   background: #dcfce7;
   color: var(--green);
-  padding: 6px 12px;
-  border-radius: 20px;
-  font-weight: 700;
-}
-
-.dot.green { color: var(--green); }
-
-.reason-box {
-  background: var(--bg-color);
-  padding: 12px;
+  padding: 4px 10px;
   border-radius: 12px;
-  font-size: 13px;
-  margin: 14px 0;
+  font-weight: 700;
+  font-size: 12px;
 }
+
+.status-tags {
+  display: flex;
+  gap: 8px;
+  margin: 10px 0;
+}
+
+.tag {
+  padding: 4px 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.tag.green { background: #dcfce7; color: var(--green); }
+.tag.yellow { background: #fef9c3; color: var(--yellow); }
+.tag.gray { background: #f1f5f9; color: var(--text-muted); }
 
 .choose-route-btn {
   width: 100%;
   background: var(--accent);
   color: white;
   border: none;
-  padding: 14px;
-  border-radius: 14px;
-  font-size: 16px;
+  padding: 12px;
+  border-radius: 12px;
   font-weight: 700;
   cursor: pointer;
 }
 
-/* GPS Navigation Mode */
-.gps-viewport {
-  background: #000;
-}
+/* GPS Viewport */
+.gps-viewport { background: #070d19; }
 
 .gps-banner {
   position: absolute;
-  top: 16px;
-  left: 16px;
-  right: 16px;
+  top: 16px; left: 16px; right: 16px;
   background: #15803d;
   color: white;
   padding: 16px;
@@ -275,32 +349,28 @@ body {
   gap: 12px;
 }
 
-.gps-map-container {
-  height: 65vh;
-}
+.gps-turn-arrow { font-size: 28px; }
 
-.gps-bottom-drawer {
+.gps-map-container { height: 65vh; }
+
+.gps-drawer {
   background: var(--card-bg);
-  border-top-left-radius: 24px;
-  border-top-right-radius: 24px;
+  border-top-left-radius: 20px;
+  border-top-right-radius: 20px;
   padding: 20px;
   margin-top: auto;
 }
 
-.gps-meta {
+.gps-button-group {
   display: flex;
-  justify-content: space-between;
-  align-items: center;
+  flex-direction: column;
+  gap: 8px;
+  margin-top: 12px;
 }
 
-.gps-actions {
-  display: flex;
-  gap: 10px;
-  margin-top: 14px;
-}
+.wide-btn { width: 100%; }
 
 .primary-btn {
-  flex: 1;
   background: var(--accent);
   color: white;
   border: none;
@@ -309,9 +379,7 @@ body {
   font-weight: 700;
 }
 
-.finish-btn {
-  background: var(--green);
-}
+.finish-btn { background: var(--green); }
 
 .secondary-btn {
   background: var(--bg-color);
@@ -333,15 +401,9 @@ body {
   gap: 8px;
 }
 
-.app-header {
-  display: flex;
-  justify-content: space-between;
-  padding: 0 16px;
-}
+.live-dot { color: #ef4444; }
 
-.search-section {
-  padding: 12px 16px;
-}
+.search-section { padding: 12px 16px; }
 
 .search-bar {
   display: flex;
@@ -358,6 +420,14 @@ body {
   background: none;
   width: 100%;
   color: var(--text-main);
+}
+
+.search-enter-btn {
+  background: none;
+  border: none;
+  color: var(--accent);
+  font-size: 18px;
+  cursor: pointer;
 }
 
 .quick-pills {
@@ -386,10 +456,9 @@ body {
 
 .map-card-overlay {
   position: absolute;
-  bottom: 12px;
-  left: 12px;
-  right: 12px;
+  bottom: 12px; left: 12px; right: 12px;
   background: rgba(255, 255, 255, 0.95);
+  color: black;
   padding: 12px;
   border-radius: 14px;
   z-index: 1000;
@@ -413,6 +482,4 @@ body {
   color: var(--text-muted);
 }
 
-.nav-item.active {
-  color: var(--accent);
-}
+.nav-item.active { color: var(--accent); }
