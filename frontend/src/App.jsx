@@ -2,6 +2,8 @@ import { useState } from 'react'
 import './App.css'
 import Map from './components/Map'
 import Directions from './pages/Directions'
+import Rewards from './pages/Rewards'
+import Me from './pages/Me'
 
 function App() {
   const [page, setPage] = useState('home')
@@ -42,6 +44,14 @@ function App() {
         <Directions />
       )}
 
+      {page === 'rewards' && (
+        <Rewards />
+      )}
+
+      {page === 'me' && (
+        <Me />
+      )}
+
       <nav className="bottom-nav">
         <button onClick={() => setPage('home')}>
           🏠
@@ -55,13 +65,13 @@ function App() {
           Directions
         </button>
 
-        <button>
+        <button onClick={() => setPage('rewards')}>
           🎁
           <br />
           Rewards
         </button>
 
-        <button>
+        <button onClick={() => setPage('me')}>
           👤
           <br />
           Me
