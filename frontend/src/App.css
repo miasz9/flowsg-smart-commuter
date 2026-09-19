@@ -22,7 +22,7 @@ body.dark-theme {
 
 body {
   margin: 0;
-  background-color: #1e293b;
+  background-color: #0b1329;
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
 }
 
@@ -35,6 +35,7 @@ body {
   display: flex;
   flex-direction: column;
   position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
 }
 
 /* Auth / Login */
@@ -125,12 +126,12 @@ body {
 }
 
 .brand-title {
-  font-size: 20px;
+  font-size: 22px;
   font-weight: 800;
   color: var(--accent);
 }
 
-/* User Settings / Profile */
+/* Profile / Settings */
 .profile-card {
   text-align: center;
   padding: 20px;
@@ -165,6 +166,25 @@ body {
   align-items: center;
   padding: 10px 0;
   border-bottom: 1px solid var(--border);
+}
+
+.setting-row select {
+  padding: 6px;
+  border-radius: 8px;
+  background: var(--bg-color);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+}
+
+.signout-btn {
+  background: #ef4444;
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 14px;
+  font-weight: 700;
+  cursor: pointer;
+  margin-top: 10px;
 }
 
 /* Rewards Section */
@@ -258,11 +278,11 @@ body {
   cursor: pointer;
 }
 
-/* Modal Overlay */
+/* Modals */
 .modal-overlay {
   position: fixed;
   top: 0; left: 0; right: 0; bottom: 0;
-  background: rgba(0, 0, 0, 0.7);
+  background: rgba(0, 0, 0, 0.8);
   display: flex;
   align-items: center;
   justify-content: center;
@@ -277,10 +297,11 @@ body {
   width: 100%;
   max-width: 360px;
   text-align: center;
+  color: var(--text-main);
 }
 
 .barcode-box {
-  background: #f8fafc;
+  background: #ffffff;
   color: black;
   padding: 16px;
   border-radius: 12px;
@@ -289,57 +310,21 @@ body {
   letter-spacing: 4px;
 }
 
-/* Route Comparison Frame */
-.route-comparison-card {
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  border-radius: 16px;
-  padding: 16px;
-  margin-bottom: 12px;
-}
-
-.pts-badge {
-  background: #dcfce7;
-  color: var(--green);
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-weight: 700;
-  font-size: 12px;
-}
-
-.status-tags {
-  display: flex;
-  gap: 8px;
+.disruption-modal { text-align: left; }
+.disruption-item {
+  background: var(--bg-color);
+  padding: 10px;
+  border-radius: 10px;
   margin: 10px 0;
+  border-left: 4px solid var(--red);
 }
 
-.tag {
-  padding: 4px 10px;
-  border-radius: 12px;
-  font-size: 12px;
-}
-
-.tag.green { background: #dcfce7; color: var(--green); }
-.tag.yellow { background: #fef9c3; color: var(--yellow); }
-.tag.gray { background: #f1f5f9; color: var(--text-muted); }
-
-.choose-route-btn {
-  width: 100%;
-  background: var(--accent);
-  color: white;
-  border: none;
-  padding: 12px;
-  border-radius: 12px;
-  font-weight: 700;
-  cursor: pointer;
-}
-
-/* GPS Viewport */
+/* GPS Viewport with Map Canvas */
 .gps-viewport { background: #070d19; }
 
 .gps-banner {
-  position: absolute;
-  top: 16px; left: 16px; right: 16px;
+  position: relative;
+  margin: 12px;
   background: #15803d;
   color: white;
   padding: 16px;
@@ -351,7 +336,12 @@ body {
 
 .gps-turn-arrow { font-size: 28px; }
 
-.gps-map-container { height: 65vh; }
+.gps-map-frame {
+  height: 280px;
+  margin: 0 12px;
+  border-radius: 16px;
+  overflow: hidden;
+}
 
 .gps-drawer {
   background: var(--card-bg);
@@ -377,6 +367,7 @@ body {
   padding: 12px;
   border-radius: 12px;
   font-weight: 700;
+  cursor: pointer;
 }
 
 .finish-btn { background: var(--green); }
@@ -387,9 +378,10 @@ body {
   border: 1px solid var(--border);
   padding: 12px;
   border-radius: 12px;
+  cursor: pointer;
 }
 
-/* Main Dashboard Elements */
+/* Home Dashboard Elements */
 .top-status-pill {
   background: #0f172a;
   color: white;
@@ -399,6 +391,7 @@ body {
   font-size: 12px;
   display: flex;
   gap: 8px;
+  cursor: pointer;
 }
 
 .live-dot { color: #ef4444; }
@@ -420,6 +413,7 @@ body {
   background: none;
   width: 100%;
   color: var(--text-main);
+  font-size: 14px;
 }
 
 .search-enter-btn {
@@ -444,6 +438,7 @@ body {
   padding: 6px 12px;
   border-radius: 16px;
   white-space: nowrap;
+  cursor: pointer;
 }
 
 .map-view-container {
@@ -454,6 +449,11 @@ body {
   position: relative;
 }
 
+.leaflet-map {
+  height: 100%;
+  width: 100%;
+}
+
 .map-card-overlay {
   position: absolute;
   bottom: 12px; left: 12px; right: 12px;
@@ -462,6 +462,7 @@ body {
   padding: 12px;
   border-radius: 14px;
   z-index: 1000;
+  cursor: pointer;
 }
 
 .bottom-navigation {
@@ -480,6 +481,7 @@ body {
   flex-direction: column;
   align-items: center;
   color: var(--text-muted);
+  cursor: pointer;
 }
 
 .nav-item.active { color: var(--accent); }

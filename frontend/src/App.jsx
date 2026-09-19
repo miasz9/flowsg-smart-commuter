@@ -3,7 +3,7 @@ import { MapContainer, TileLayer, Marker, Popup, Polyline } from 'react-leaflet'
 import L from 'leaflet';
 import './App.css';
 
-// Fix default Leaflet marker assets in React
+// Fix for default Leaflet marker icons in React
 delete L.Icon.Default.prototype._getIconUrl;
 L.Icon.Default.mergeOptions({
   iconRetinaUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-icon-2x.png',
@@ -11,113 +11,139 @@ L.Icon.Default.mergeOptions({
   shadowUrl: 'https://cdnjs.cloudflare.com/ajax/libs/leaflet/1.7.1/images/marker-shadow.png',
 });
 
-// 4 Distinct Route Profiles
-const ROUTE_OPTIONS = [
+// Translation dictionary for full UI localization
+const TRANSLATIONS = {
+  English: {
+    home: 'Home',
+    directions: 'Directions',
+    rewards: 'Rewards',
+    me: 'Me',
+    searchPlaceholder: 'Where are you heading today?',
+    headingQuestion: 'Where are you heading today?',
+    profileSettings: 'Profile Settings',
+    general: 'General',
+    language: 'Language',
+    darkMode: 'Dark Mode',
+    yourPreferences: 'Your Preferences',
+    signOut: 'Sign Out',
+    liveUpdates: 'Live · 14:32 East-West Line: partial delay',
+    disruptions: '3 disruptions',
+  },
+  'Bahasa Melayu': {
+    home: 'Utama',
+    directions: 'Arah',
+    rewards: 'Ganjaran',
+    me: 'Profil',
+    searchPlaceholder: 'Ke mana anda hendak pergi hari ini?',
+    headingQuestion: 'Ke mana anda hendak pergi hari ini?',
+    profileSettings: 'Tetapan Profil',
+    general: 'Umum',
+    language: 'Bahasa',
+    darkMode: 'Mod Gelap',
+    yourPreferences: 'Pilihan Anda',
+    signOut: 'Log Keluar',
+    liveUpdates: 'Langsung · 14:32 Laluan East-West: gangguan separa',
+    disruptions: '3 gangguan',
+  },
+  Chinese: {
+    home: '首页',
+    directions: '路线',
+    rewards: '奖励',
+    me: '我的',
+    searchPlaceholder: '您今天想去哪里？',
+    headingQuestion: '您今天想去哪里？',
+    profileSettings: '个人设置',
+    general: '常规',
+    language: '语言',
+    darkMode: '深色模式',
+    yourPreferences: '偏好设置',
+    signOut: '退出登录',
+    liveUpdates: '实时 · 14:32 东西线：部分延迟',
+    disruptions: '3条中断信息',
+  },
+  Tamil: {
+    home: 'முகப்பு',
+    directions: 'திசைகள்',
+    rewards: 'சலுகைகள்',
+    me: 'சுயவிவரம்',
+    searchPlaceholder: 'இன்று எங்கு செல்ல விரும்புகிறீர்கள்?',
+    headingQuestion: 'இன்று எங்கு செல்ல விரும்புகிறீர்கள்?',
+    profileSettings: 'சுயவிவர அமைப்புகள்',
+    general: 'பொதுவானவை',
+    language: 'மொழி',
+    darkMode: 'இருண்ட பயன்முறை',
+    yourPreferences: 'உங்கள் விருப்பங்கள்',
+    signOut: 'வெளியேறு',
+    liveUpdates: 'நேரலை · 14:32 கிழக்கு-மேற்கு பாதை: தாமதம்',
+    disruptions: '3 இடையூறுகள்',
+  },
+};
+
+// Destination-Specific Mock Routes
+const SCHOOL_ROUTES = [
   {
-    id: 'preferred',
-    title: '⭐️ Your Preferred Route',
-    subtitle: 'Via DTL (Downtown Line)',
+    id: 'nus-dtl',
+    title: '⭐️ Alternative via DTL to NUS',
+    destination: 'NUS Kent Ridge',
     time: '42 min',
     distance: '3.2 km',
     points: 20,
-    crowding: 'Low crowding',
+    crowding: 'Low Crowded',
     crowdingLevel: 'green',
     walkTime: '6 min walking',
-    timeDelta: 'Recommended based on your history',
-    category: 'preferred',
-    path: [[1.2966, 103.8501], [1.2930, 103.8520], [1.2840, 103.8510]],
+    timeDelta: 'Direct access to Faculty of Engineering',
+    path: [[1.2966, 103.8501], [1.2930, 103.8520], [1.2950, 103.7768]],
   },
   {
-    id: 'sheltered',
-    title: '☔ Sheltered Path Route',
-    subtitle: 'Covered Walkway + EWL Transit',
-    time: '46 min',
-    distance: '3.5 km',
-    points: 15,
-    crowding: 'Moderate crowding',
-    crowdingLevel: 'yellow',
-    walkTime: '8 min fully sheltered',
-    timeDelta: '4 min slower • 100% rain sheltered',
-    category: 'sheltered',
-    path: [[1.2966, 103.8501], [1.2910, 103.8490], [1.2840, 103.8510]],
-  },
-  {
-    id: 'least-crowded',
-    title: '🌿 Least Crowded Route',
-    subtitle: 'Bus Loop 95 via Kent Ridge Park',
-    time: '50 min',
-    distance: '4.1 km',
-    points: 30, // Highest points for least crowded
-    crowding: 'Low footfall forecast',
-    crowdingLevel: 'green',
-    walkTime: '5 min walking',
-    timeDelta: '8 min slower • +30 Bonus Points',
-    category: 'least-crowded',
-    path: [[1.2966, 103.8501], [1.3000, 103.8450], [1.2840, 103.8510]],
-  },
-  {
-    id: 'accessible',
-    title: '♿ Fully Accessible Route',
-    subtitle: 'Step-Free Elevator & Ramp Access',
+    id: 'nus-bus',
+    title: '🌿 Bus 95 Express Loop',
+    destination: 'NUS Kent Ridge Campus',
     time: '48 min',
-    distance: '3.6 km',
-    points: 10,
-    crowding: 'Low crowding',
+    distance: '3.8 km',
+    points: 30,
+    crowding: 'Least Crowded',
     crowdingLevel: 'green',
-    walkTime: '0 stairs • Lift maintenance clear',
-    timeDelta: '6 min slower • Fully barrier-free',
-    category: 'accessible',
-    path: [[1.2966, 103.8501], [1.2880, 103.8470], [1.2840, 103.8510]],
+    walkTime: '4 min walking',
+    timeDelta: '6 min slower • +30 Bonus Points',
+    path: [[1.2966, 103.8501], [1.3000, 103.8450], [1.2950, 103.7768]],
   },
 ];
 
-// FlowSG Deals Catalog
+const DOWNTOWN_ROUTES = [
+  {
+    id: 'guoco-ewl',
+    title: '⭐️ Direct Transit to Guoco Tower',
+    destination: 'Guoco Tower (Tanjong Pagar)',
+    time: '28 min',
+    distance: '8.5 km',
+    points: 10,
+    crowding: 'Moderate Crowded',
+    crowdingLevel: 'yellow',
+    walkTime: '2 min direct basement link',
+    timeDelta: 'Fastest route to Central Business District',
+    path: [[1.2966, 103.8501], [1.2820, 103.8440], [1.2764, 103.8446]],
+  },
+  {
+    id: 'guoco-tel',
+    title: '☂️ Sheltered TEL Extension',
+    destination: 'Guoco Tower (Tanjong Pagar)',
+    time: '32 min',
+    distance: '9.1 km',
+    points: 25,
+    crowding: 'Least Crowded',
+    crowdingLevel: 'green',
+    walkTime: '5 min fully sheltered',
+    timeDelta: '100% rain sheltered path • +25 Points',
+    path: [[1.2966, 103.8501], [1.2800, 103.8500], [1.2764, 103.8446]],
+  },
+];
+
 const DEALS_CATALOG = [
-  {
-    id: 1,
-    merchant: 'BreadTalk',
-    title: '1-for-1 Flosss Bun Deal',
-    category: 'dine',
-    deadline: 'Redeem by 31 Oct 2026',
-    terms: 'Valid at all Singapore outlets including NUS Geneo.',
-    imgClass: 'breadtalk-img',
-  },
-  {
-    id: 2,
-    merchant: 'ChiCha San Chen',
-    title: 'S$2.00 off Fresh Taro Boba Tea',
-    category: 'dine',
-    deadline: 'Redeem by 15 Nov 2026',
-    terms: 'Valid with 100 FlowSG points redemption.',
-    imgClass: 'chicha-img',
-  },
-  {
-    id: 3,
-    merchant: "McDonald's",
-    title: 'Free Medium Fries with any Meal',
-    category: 'featured',
-    deadline: 'Redeem by 28 Oct 2026',
-    terms: 'Applicable via FlowSG QR at self-checkout.',
-    imgClass: 'mcd-img',
-  },
-  {
-    id: 4,
-    merchant: 'Cathay Pacific',
-    title: '50% off flight bookings on Wednesdays',
-    category: 'featured',
-    deadline: 'Redeem by 31 Dec 2026',
-    terms: 'Exclusive to FlowSG commuter pass holders.',
-    imgClass: 'cathay-img',
-  },
-  {
-    id: 5,
-    merchant: 'KKday Singapore',
-    title: 'Up to S$350 off local attraction passes',
-    category: 'nearby',
-    deadline: 'Redeem by 20 Nov 2026',
-    terms: 'Includes Sentosa Skyline Luge & Haw Par Villa.',
-    imgClass: 'kkday-img',
-  },
+  { id: 1, merchant: 'BreadTalk', title: '1-for-1 Flosss Bun Deal', category: 'dine', deadline: 'Redeem by 31 Oct 2026', terms: 'Valid at NUS Geneo branch.', imgClass: 'breadtalk-img' },
+  { id: 2, merchant: 'ChiCha San Chen', title: 'S$2.00 off Fresh Taro Boba', category: 'dine', deadline: 'Redeem by 15 Nov 2026', terms: 'Valid with 100 FlowSG points.', imgClass: 'chicha-img' },
+  { id: 3, merchant: "McDonald's", title: 'Free Medium Fries with Meal', category: 'featured', deadline: 'Redeem by 28 Oct 2026', terms: 'Scan FlowSG QR code at checkout.', imgClass: 'mcd-img' },
+  { id: 4, merchant: 'Cathay Pacific', title: '50% off flight bookings', category: 'featured', deadline: 'Redeem by 31 Dec 2026', terms: 'Exclusive to FlowSG pass holders.', imgClass: 'cathay-img' },
+  { id: 5, merchant: 'KKday', title: 'Up to S$350 off attractions', category: 'nearby', deadline: 'Redeem by 20 Nov 2026', terms: 'Includes Sentosa Luge & Haw Par Villa.', imgClass: 'kkday-img' },
 ];
 
 const GPS_STEPS = [
@@ -129,37 +155,41 @@ const GPS_STEPS = [
 ];
 
 export default function App() {
-  const [isLoggedIn, setIsLoggedIn] = useState(false);
-  const [authMode, setAuthMode] = useState('login'); // 'login' | 'signup'
+  const [isLoggedIn, setIsLoggedIn] = useState(true);
+  const [authMode, setAuthMode] = useState('login');
   const [username, setUsername] = useState('Hee Jin');
   const [password, setPassword] = useState('');
 
-  // App Screen State: 'home' | 'routes' | 'gps' | 'rewards' | 'me'
+  // App Navigation: 'home' | 'routes' | 'gps' | 'rewards' | 'me'
   const [currentScreen, setCurrentScreen] = useState('home');
   const [activeTab, setActiveTab] = useState('home');
 
   // Search & Navigation
   const [searchQuery, setSearchQuery] = useState('');
-  const [selectedRoute, setSelectedRoute] = useState(ROUTE_OPTIONS[0]);
+  const [activeRouteSet, setActiveRouteSet] = useState(SCHOOL_ROUTES);
+  const [selectedRoute, setSelectedRoute] = useState(SCHOOL_ROUTES[0]);
   const [gpsStepIndex, setGpsStepIndex] = useState(0);
 
-  // User Preferences
-  const [userProfile, setUserProfile] = useState({
-    language: 'English',
-    darkMode: true,
-    preferences: {
-      fastest: true,
-      leastCrowded: true,
-      sheltered: true,
-      accessible: false,
-    },
-  });
-
-  // Rewards Modals
+  // Modals
+  const [showDisruptionModal, setShowDisruptionModal] = useState(false);
   const [showRewardsCardModal, setShowRewardsCardModal] = useState(false);
   const [selectedDealModal, setSelectedDealModal] = useState(null);
   const [dealFilter, setDealFilter] = useState('all');
   const [pointsBalance, setPointsBalance] = useState(1260);
+
+  // User Profile Preferences with fixed capitalization
+  const [userProfile, setUserProfile] = useState({
+    language: 'English',
+    darkMode: true,
+    preferences: {
+      Fastest: true,
+      'Least Crowded': true,
+      Sheltered: true,
+      Accessible: false,
+    },
+  });
+
+  const t = TRANSLATIONS[userProfile.language] || TRANSLATIONS.English;
 
   useEffect(() => {
     if (userProfile.darkMode) {
@@ -178,9 +208,27 @@ export default function App() {
 
   const handleSearchSubmit = (e) => {
     e.preventDefault();
-    if (searchQuery.trim() !== '') {
-      setCurrentScreen('routes');
+    if (searchQuery.toLowerCase().includes('downtown') || searchQuery.toLowerCase().includes('guoco')) {
+      setActiveRouteSet(DOWNTOWN_ROUTES);
+      setSelectedRoute(DOWNTOWN_ROUTES[0]);
+    } else {
+      setActiveRouteSet(SCHOOL_ROUTES);
+      setSelectedRoute(SCHOOL_ROUTES[0]);
     }
+    setCurrentScreen('routes');
+  };
+
+  const handleQuickSelect = (type) => {
+    if (type === 'school') {
+      setSearchQuery('NUS Kent Ridge');
+      setActiveRouteSet(SCHOOL_ROUTES);
+      setSelectedRoute(SCHOOL_ROUTES[0]);
+    } else {
+      setSearchQuery('Guoco Tower (Downtown)');
+      setActiveRouteSet(DOWNTOWN_ROUTES);
+      setSelectedRoute(DOWNTOWN_ROUTES[0]);
+    }
+    setCurrentScreen('routes');
   };
 
   const handleStartGPS = (route) => {
@@ -189,14 +237,13 @@ export default function App() {
     setCurrentScreen('gps');
   };
 
-  // Filtered Deals Logic
   const filteredDeals = DEALS_CATALOG.filter((deal) => {
     if (dealFilter === 'all') return true;
     return deal.category === dealFilter;
   });
 
   // --------------------------------------------------------------------------
-  // 1. AUTH SCREEN (LOGIN / CREATE ACCOUNT)
+  // AUTH SCREEN
   // --------------------------------------------------------------------------
   if (!isLoggedIn) {
     return (
@@ -252,29 +299,29 @@ export default function App() {
   }
 
   // --------------------------------------------------------------------------
-  // 2. ME PAGE / USER PREFERENCES
+  // ME PAGE / USER PREFERENCES & SIGN OUT
   // --------------------------------------------------------------------------
   if (currentScreen === 'me') {
     return (
       <div className="app-viewport">
         <header className="page-header">
           <button className="home-back-btn" onClick={() => handleTabChange('home')}>
-            🏠 Home
+            🏠 {t.home}
           </button>
-          <h2>Profile Settings</h2>
+          <h2>{t.profileSettings}</h2>
         </header>
 
         <main className="page-content">
           <div className="profile-card">
             <div className="avatar-circle">{username.charAt(0)}</div>
             <h3>{username}</h3>
-            <p className="sub-label">FlowSG Smart Commuter</p>
+            <p className="sub-label">FlowSG Member • {pointsBalance} pts</p>
           </div>
 
           <section className="settings-group">
-            <h4>General</h4>
+            <h4>{t.general}</h4>
             <div className="setting-row">
-              <label>Language</label>
+              <label>{t.language}</label>
               <select
                 value={userProfile.language}
                 onChange={(e) => setUserProfile({ ...userProfile, language: e.target.value })}
@@ -287,7 +334,7 @@ export default function App() {
             </div>
 
             <div className="setting-row">
-              <label>Dark Mode</label>
+              <label>{t.darkMode}</label>
               <input
                 type="checkbox"
                 checked={userProfile.darkMode}
@@ -297,10 +344,10 @@ export default function App() {
           </section>
 
           <section className="settings-group">
-            <h4>Your Preferences</h4>
+            <h4>{t.yourPreferences}</h4>
             {Object.keys(userProfile.preferences).map((pref) => (
               <div className="setting-row" key={pref}>
-                <span className="capitalize">{pref.replace(/([A-Z])/g, ' $1')}</span>
+                <span>{pref}</span>
                 <input
                   type="checkbox"
                   checked={userProfile.preferences[pref]}
@@ -317,36 +364,36 @@ export default function App() {
               </div>
             ))}
           </section>
+
+          <button className="signout-btn wide-btn" onClick={() => setIsLoggedIn(false)}>
+            🚪 {t.signOut}
+          </button>
         </main>
       </div>
     );
   }
 
   // --------------------------------------------------------------------------
-  // 3. REWARDS PAGE
+  // REWARDS PAGE
   // --------------------------------------------------------------------------
   if (currentScreen === 'rewards') {
     return (
       <div className="app-viewport">
         <header className="page-header purple-header">
           <button className="home-back-btn white-btn" onClick={() => handleTabChange('home')}>
-            🏠 Home
+            🏠 {t.home}
           </button>
           <h2>FlowSG Rewards</h2>
         </header>
 
         <main className="page-content">
-          {/* Rewards Card */}
           <div className="rewards-balance-card">
             <div className="rewards-card-top">
               <div>
                 <h3>Hi {username}</h3>
                 <p className="balance-pts">{pointsBalance} pts</p>
               </div>
-              <button
-                className="rewards-card-badge"
-                onClick={() => setShowRewardsCardModal(true)}
-              >
+              <button className="rewards-card-badge" onClick={() => setShowRewardsCardModal(true)}>
                 💳 Rewards Card
               </button>
             </div>
@@ -355,7 +402,6 @@ export default function App() {
             </div>
           </div>
 
-          {/* Deals & Vouchers Section */}
           <section className="deals-section">
             <h4>Redeem Partner Deals</h4>
             <div className="deals-tabs">
@@ -378,10 +424,7 @@ export default function App() {
                   </div>
                   <h5>{deal.title}</h5>
                   <p className="deadline-text">⏳ {deal.deadline}</p>
-                  <button
-                    className="view-btn"
-                    onClick={() => setSelectedDealModal(deal)}
-                  >
+                  <button className="view-btn" onClick={() => setSelectedDealModal(deal)}>
                     VIEW
                   </button>
                 </div>
@@ -390,7 +433,6 @@ export default function App() {
           </section>
         </main>
 
-        {/* Modal 1: Rewards Card & Barcode Overlay */}
         {showRewardsCardModal && (
           <div className="modal-overlay">
             <div className="modal-card">
@@ -407,7 +449,6 @@ export default function App() {
           </div>
         )}
 
-        {/* Modal 2: Deal Details & Terms */}
         {selectedDealModal && (
           <div className="modal-overlay">
             <div className="modal-card">
@@ -426,7 +467,7 @@ export default function App() {
   }
 
   // --------------------------------------------------------------------------
-  // 4. ROUTE COMPARISON PAGE (Surfacing 4 Options)
+  // ROUTE OPTIONS SCREEN (Opened via Directions tab or Search)
   // --------------------------------------------------------------------------
   if (currentScreen === 'routes') {
     return (
@@ -435,20 +476,19 @@ export default function App() {
           <button className="home-back-btn" onClick={() => setCurrentScreen('home')}>
             ← Back
           </button>
-          <h2>Recommended Routes</h2>
+          <h2>Route Options</h2>
         </header>
 
         <main className="page-content">
-          <p className="section-subtitle">Showing 4 tailored routes for your destination:</p>
+          <p className="section-subtitle">Tailored options for {selectedRoute.destination || 'your journey'}:</p>
 
           <div className="route-options-list">
-            {ROUTE_OPTIONS.map((route) => (
+            {activeRouteSet.map((route) => (
               <div key={route.id} className="route-comparison-card">
                 <div className="route-head">
                   <h4>{route.title}</h4>
                   {route.points > 0 && <span className="pts-badge">+{route.points} pts</span>}
                 </div>
-                <p className="route-sub">{route.subtitle}</p>
 
                 <div className="route-metrics">
                   <span className="time-val">{route.time}</span>
@@ -474,12 +514,12 @@ export default function App() {
   }
 
   // --------------------------------------------------------------------------
-  // 5. GPS NAVIGATION VIEW (Prince George's Park / NUHS GIS)
+  // GPS NAVIGATION FRAME (With dedicated OpenStreetMap Canvas)
   // --------------------------------------------------------------------------
   if (currentScreen === 'gps') {
     return (
       <div className="app-viewport gps-viewport">
-        {/* GPS Direction Banner */}
+        {/* Top Green Direction Banner */}
         <div className="gps-banner">
           <div className="gps-turn-arrow">↱</div>
           <div>
@@ -488,8 +528,8 @@ export default function App() {
           </div>
         </div>
 
-        {/* GIS OpenStreetMap Display */}
-        <div className="gps-map-container">
+        {/* Dedicated GPS Map Frame */}
+        <div className="gps-map-frame">
           <MapContainer
             center={[1.2930, 103.8520]}
             zoom={16}
@@ -500,15 +540,14 @@ export default function App() {
               attribution='&copy; <a href="https://www.openstreetmap.org/copyright">OpenStreetMap</a>'
               url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
             />
-            {/* Navigation Marker Cursor */}
             <Marker position={[1.2930, 103.8520]}>
-              <Popup>Prince George's Park Routing</Popup>
+              <Popup>Navigation Active: Prince George's Park</Popup>
             </Marker>
             <Polyline positions={selectedRoute.path} color="#00f2fe" weight={7} />
           </MapContainer>
         </div>
 
-        {/* Bottom Drawer Controls */}
+        {/* Bottom Navigation Control Drawer */}
         <div className="gps-drawer">
           <div className="gps-info-row">
             <div>
@@ -545,30 +584,30 @@ export default function App() {
   }
 
   // --------------------------------------------------------------------------
-  // 6. MAIN HOME DASHBOARD
+  // HOME DASHBOARD
   // --------------------------------------------------------------------------
   return (
     <div className="app-viewport">
       {/* Live Disruption Alert Banner */}
-      <div className="top-status-pill">
+      <div className="top-status-pill" onClick={() => setShowDisruptionModal(true)}>
         <span className="live-dot">●</span>
-        <span>Live · 14:32 East-West Line: partial delay</span>
-        <span className="status-count">3 disruptions</span>
+        <span className="status-text">{t.liveUpdates}</span>
+        <span className="status-count">{t.disruptions} ℹ️</span>
       </div>
 
-      {/* Simplified FlowSG Header */}
+      {/* Brand Header */}
       <header className="app-header simple-header">
         <div className="brand-title">FlowSG</div>
       </header>
 
-      {/* Main Search Bar & Quick Destinations */}
+      {/* Main Search Input */}
       <section className="search-section">
-        <h2>Where are you heading today?</h2>
+        <h2>{t.headingQuestion}</h2>
         <form onSubmit={handleSearchSubmit} className="search-bar">
           <span className="search-icon">🔍</span>
           <input
             type="text"
-            placeholder="Where are you heading today?"
+            placeholder={t.searchPlaceholder}
             value={searchQuery}
             onChange={(e) => setSearchQuery(e.target.value)}
           />
@@ -576,13 +615,12 @@ export default function App() {
         </form>
 
         <div className="quick-pills">
-          <button onClick={() => setCurrentScreen('routes')}>Home → School</button>
-          <button onClick={() => setCurrentScreen('routes')}>Morning to Downtown</button>
-          <button onClick={() => setCurrentScreen('routes')}>Accessible to Hospital</button>
+          <button onClick={() => handleQuickSelect('school')}>Home → School (NUS)</button>
+          <button onClick={() => handleQuickSelect('downtown')}>Morning to Downtown (Guoco Tower)</button>
         </div>
       </section>
 
-      {/* OpenStreetMap Area */}
+      {/* Main OpenStreetMap Display */}
       <section className="map-view-container">
         <MapContainer
           center={[1.2966, 103.8501]}
@@ -595,41 +633,69 @@ export default function App() {
             url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
           />
           <Marker position={[1.2966, 103.8501]} />
-          <Polyline positions={ROUTE_OPTIONS[0].path} color="#2563eb" weight={5} />
+          <Polyline positions={SCHOOL_ROUTES[0].path} color="#2563eb" weight={5} />
         </MapContainer>
 
-        <div className="map-card-overlay" onClick={() => setCurrentScreen('routes')}>
+        {/* Clicking recommended route on home leads directly to GPS */}
+        <div className="map-card-overlay" onClick={() => handleStartGPS(SCHOOL_ROUTES[0])}>
           <span className="badge-tag">RECOMMENDED · LESS CROWDED</span>
           <h4>18 min • 3.2 km</h4>
-          <p>via Riverside Loop, low footfall</p>
+          <p>via Riverside Loop, low footfall ➔ <strong>Tap to start GPS</strong></p>
         </div>
       </section>
 
-      {/* Sticky Bottom Navigation */}
+      {/* Live Disruptions & Exit Closures Modal */}
+      {showDisruptionModal && (
+        <div className="modal-overlay">
+          <div className="modal-card disruption-modal">
+            <h3>🚨 Active Transit Disruptions</h3>
+            <div className="disruption-item">
+              <strong>East-West Line (EWL)</strong>
+              <p>Signal fault between Buona Vista & Jurong East. 15-min delay.</p>
+            </div>
+            <div className="disruption-item">
+              <strong>Kent Ridge MRT (Exit B Closure)</strong>
+              <p>Lift maintenance in progress. Use sheltered ramp at Exit A.</p>
+            </div>
+            <div className="disruption-item">
+              <strong>Heavy Rain Advisory</strong>
+              <p>High rainfall recorded near Science Park Drive.</p>
+            </div>
+            <button className="primary-btn wide-btn" onClick={() => setShowDisruptionModal(false)}>
+              Close Updates
+            </button>
+          </div>
+        </div>
+      )}
+
+      {/* Sticky Bottom Navigation Bar */}
       <nav className="bottom-navigation">
         <button
           className={activeTab === 'home' ? 'nav-item active' : 'nav-item'}
           onClick={() => handleTabChange('home')}
         >
-          🏠<span>Home</span>
+          🏠<span>{t.home}</span>
         </button>
         <button
           className={activeTab === 'directions' ? 'nav-item active' : 'nav-item'}
-          onClick={() => setCurrentScreen('routes')}
+          onClick={() => {
+            setActiveTab('directions');
+            setCurrentScreen('routes');
+          }}
         >
-          🧭<span>Directions</span>
+          🧭<span>{t.directions}</span>
         </button>
         <button
           className={activeTab === 'rewards' ? 'nav-item active' : 'nav-item'}
           onClick={() => handleTabChange('rewards')}
         >
-          🎁<span>Rewards</span>
+          🎁<span>{t.rewards}</span>
         </button>
         <button
           className={activeTab === 'me' ? 'nav-item active' : 'nav-item'}
           onClick={() => handleTabChange('me')}
         >
-          👤<span>Me</span>
+          👤<span>{t.me}</span>
         </button>
       </nav>
     </div>
