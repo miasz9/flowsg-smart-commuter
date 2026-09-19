@@ -1,74 +1,418 @@
+@import 'leaflet/dist/leaflet.css';
+
 :root {
-  --bg: #f8f9fa;
+  --bg-color: #f3f6f9;
   --card-bg: #ffffff;
-  --text: #1a1a1a;
-  --accent: #0070f3;
-  --accent-light: #e6f0ff;
-  --border: #e5e7eb;
+  --text-main: #0f172a;
+  --text-muted: #64748b;
+  --accent: #2563eb;
+  --border: #e2e8f0;
+  --green: #16a34a;
+  --red: #dc2626;
+  --yellow: #ca8a04;
 }
 
-@media (prefers-color-scheme: dark) {
-  :root {
-    --bg: #121212;
-    --card-bg: #1e1e1e;
-    --text: #f3f4f6;
-    --accent: #3b82f6;
-    --accent-light: #1e293b;
-    --border: #374151;
-  }
+body.dark-theme {
+  --bg-color: #0f172a;
+  --card-bg: #1e293b;
+  --text-main: #f8fafc;
+  --text-muted: #94a3b8;
+  --border: #334155;
 }
 
-.app {
-  max-width: 480px;
+body {
+  margin: 0;
+  background-color: #cbd5e1;
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, sans-serif;
+}
+
+.app-viewport {
+  max-width: 430px;
   margin: 0 auto;
-  padding-bottom: 70px;
-  background: var(--bg);
-  color: var(--text);
-  font-family: system-ui, -apple-system, sans-serif;
+  min-height: 100vh;
+  background-color: var(--bg-color);
+  color: var(--text-main);
+  display: flex;
+  flex-direction: column;
+  position: relative;
+  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.1);
 }
 
-.travel-update-banner {
-  background: #fef3c7;
-  color: #92400e;
-  padding: 12px;
-  border-radius: 8px;
-  margin: 10px 16px;
-  font-size: 14px;
-}
-
-.map-container {
-  height: 250px;
-  background: var(--card-bg);
-  border: 1px solid var(--border);
-  margin: 16px;
-  border-radius: 12px;
+/* Headers & Home Buttons */
+.page-header {
   display: flex;
   align-items: center;
-  justify-content: center;
+  padding: 16px;
+  background: var(--card-bg);
+  border-bottom: 1px solid var(--border);
+  gap: 12px;
 }
 
-.route-card {
-  background: var(--card-bg);
+.purple-header {
+  background: #4c1d95;
+  color: white;
+}
+
+.home-back-btn {
   border: 1px solid var(--border);
-  padding: 14px;
-  margin: 10px 16px;
-  border-radius: 10px;
+  background: var(--bg-color);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 12px;
+  font-weight: 600;
   cursor: pointer;
 }
 
-.route-card.selected {
-  border-color: var(--accent);
-  background: var(--accent-light);
+.white-btn {
+  background: rgba(255, 255, 255, 0.2);
+  color: white;
+  border: none;
 }
 
-.bottom-nav {
-  position: fixed;
-  bottom: 0;
-  max-width: 480px;
+.page-content {
+  padding: 16px;
+  flex: 1;
+}
+
+/* User Settings / Me Screen */
+.profile-card {
+  text-align: center;
+  padding: 20px;
+  background: var(--card-bg);
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.profile-avatar {
+  width: 50px;
+  height: 50px;
+  background: var(--accent);
+  color: white;
+  border-radius: 50%;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  font-weight: 700;
+  margin: 0 auto 8px auto;
+}
+
+.settings-group {
+  background: var(--card-bg);
+  padding: 16px;
+  border-radius: 16px;
+  margin-bottom: 16px;
+}
+
+.setting-row {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding: 10px 0;
+  border-bottom: 1px solid var(--border);
+}
+
+.capitalize {
+  text-transform: capitalize;
+}
+
+/* Rewards Screen */
+.rewards-balance-card {
+  background: linear-gradient(135deg, #6d28d9, #4c1d95);
+  color: white;
+  padding: 20px;
+  border-radius: 20px;
+  margin-bottom: 16px;
+}
+
+.rewards-card-top {
+  display: flex;
+  justify-content: space-between;
+  align-items: flex-start;
+}
+
+.balance-pts {
+  font-size: 28px;
+  font-weight: 800;
+  margin: 4px 0 0 0;
+}
+
+.rewards-card-badge {
+  background: white;
+  color: #6d28d9;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.rewards-banner-note {
+  margin-top: 16px;
+  background: rgba(255, 255, 255, 0.15);
+  padding: 10px;
+  border-radius: 12px;
+  font-size: 12px;
+}
+
+.history-item {
+  display: flex;
+  justify-content: space-between;
+  background: var(--card-bg);
+  padding: 12px;
+  border-radius: 12px;
+  margin-top: 8px;
+}
+
+.pts-earned {
+  color: var(--green);
+  font-weight: 700;
+}
+
+/* Deals Grid (DBS Style) */
+.deals-grid {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: 12px;
+  margin-top: 12px;
+}
+
+.deal-card {
+  background: var(--card-bg);
+  border-radius: 14px;
+  padding: 10px;
+  border: 1px solid var(--border);
+}
+
+.deal-img {
+  height: 80px;
+  border-radius: 8px;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  color: white;
+  font-weight: 700;
+  margin-bottom: 8px;
+}
+
+.cathay-img { background: #0284c7; }
+.kkday-img { background: #0d9488; }
+
+.view-btn {
+  color: #e11d48;
+  border: none;
+  background: none;
+  font-weight: 700;
+  float: right;
+  cursor: pointer;
+}
+
+/* Recommendation Detail Frame */
+.recommendation-card {
+  background: var(--card-bg);
+  border: 2px solid var(--accent);
+  border-radius: 20px;
+  padding: 20px;
+  margin-top: 12px;
+}
+
+.rec-metrics {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin: 12px 0;
+}
+
+.main-time {
+  font-size: 32px;
+  font-weight: 800;
+}
+
+.pts-tag {
+  background: #dcfce7;
+  color: var(--green);
+  padding: 6px 12px;
+  border-radius: 20px;
+  font-weight: 700;
+}
+
+.dot.green { color: var(--green); }
+
+.reason-box {
+  background: var(--bg-color);
+  padding: 12px;
+  border-radius: 12px;
+  font-size: 13px;
+  margin: 14px 0;
+}
+
+.choose-route-btn {
   width: 100%;
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 14px;
+  border-radius: 14px;
+  font-size: 16px;
+  font-weight: 700;
+  cursor: pointer;
+}
+
+/* GPS Navigation Mode */
+.gps-viewport {
+  background: #000;
+}
+
+.gps-banner {
+  position: absolute;
+  top: 16px;
+  left: 16px;
+  right: 16px;
+  background: #15803d;
+  color: white;
+  padding: 16px;
+  border-radius: 16px;
+  z-index: 1000;
+  display: flex;
+  gap: 12px;
+}
+
+.gps-map-container {
+  height: 65vh;
+}
+
+.gps-bottom-drawer {
+  background: var(--card-bg);
+  border-top-left-radius: 24px;
+  border-top-right-radius: 24px;
+  padding: 20px;
+  margin-top: auto;
+}
+
+.gps-meta {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+}
+
+.gps-actions {
+  display: flex;
+  gap: 10px;
+  margin-top: 14px;
+}
+
+.primary-btn {
+  flex: 1;
+  background: var(--accent);
+  color: white;
+  border: none;
+  padding: 12px;
+  border-radius: 12px;
+  font-weight: 700;
+}
+
+.finish-btn {
+  background: var(--green);
+}
+
+.secondary-btn {
+  background: var(--bg-color);
+  color: var(--text-main);
+  border: 1px solid var(--border);
+  padding: 12px;
+  border-radius: 12px;
+}
+
+/* Main Dashboard Elements */
+.top-status-pill {
+  background: #0f172a;
+  color: white;
+  margin: 12px;
+  padding: 8px 14px;
+  border-radius: 20px;
+  font-size: 12px;
+  display: flex;
+  gap: 8px;
+}
+
+.app-header {
+  display: flex;
+  justify-content: space-between;
+  padding: 0 16px;
+}
+
+.search-section {
+  padding: 12px 16px;
+}
+
+.search-bar {
+  display: flex;
+  align-items: center;
+  background: var(--card-bg);
+  padding: 10px 14px;
+  border-radius: 16px;
+  border: 1px solid var(--border);
+}
+
+.search-bar input {
+  border: none;
+  outline: none;
+  background: none;
+  width: 100%;
+  color: var(--text-main);
+}
+
+.quick-pills {
+  display: flex;
+  gap: 8px;
+  margin-top: 10px;
+  overflow-x: auto;
+}
+
+.quick-pills button {
+  background: var(--card-bg);
+  border: 1px solid var(--border);
+  color: var(--text-main);
+  padding: 6px 12px;
+  border-radius: 16px;
+  white-space: nowrap;
+}
+
+.map-view-container {
+  margin: 12px 16px;
+  height: 250px;
+  border-radius: 20px;
+  overflow: hidden;
+  position: relative;
+}
+
+.map-card-overlay {
+  position: absolute;
+  bottom: 12px;
+  left: 12px;
+  right: 12px;
+  background: rgba(255, 255, 255, 0.95);
+  padding: 12px;
+  border-radius: 14px;
+  z-index: 1000;
+}
+
+.bottom-navigation {
   display: flex;
   justify-content: space-around;
   background: var(--card-bg);
+  padding: 10px 0;
   border-top: 1px solid var(--border);
-  padding: 8px 0;
+  margin-top: auto;
+}
+
+.nav-item {
+  background: none;
+  border: none;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  color: var(--text-muted);
+}
+
+.nav-item.active {
+  color: var(--accent);
 }
