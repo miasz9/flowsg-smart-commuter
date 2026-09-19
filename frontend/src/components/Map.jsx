@@ -3,10 +3,83 @@ import {
   TileLayer,
   Marker,
   Popup,
-  Polyline
+  Polyline,
+  useMap
 } from 'react-leaflet'
 
-function Map({ mapId = 'default-map', selectedRoute = null }) {
+function decodePolyline(encoded) {
+  let index = 0
+  let lat = 0
+  let lng = 0
+  const coordinates = []
+
+  while (index < encoded.length) {
+    let shift = 0
+    let result = 0
+    let byte
+
+    do {
+      byte = encoded.charCodeAt(index++) - 63
+      result |= (byte & 0x1f) << shift
+      shift += 5
+    } while (byte >= 0x20)
+
+    const deltaLat =
+      result & 1 ? ~(result >> 1) : result >> 1
+
+    lat += deltaLat
+
+    shift = 0
+    result = 0
+
+    do {
+      byte = encoded.charCodeAt(index++) - 63
+      result |= (byte & 0x1f) << shift
+      shift += 5
+    } while (byte >= 0x20)
+
+    const deltaLng =
+      result & 1 ? ~(result >> 1) : result >> 1
+
+    lng += deltaLng
+
+    coordinates.push([
+      lat / 100000,
+      lng / 100000
+    ])
+  }
+
+  return coordinates
+}
+
+function FitRoute({ routeData }) {
+  const map = useMap()
+
+  if (routeData) {
+    const coordinates = []
+
+    routeData.legs.forEach((leg) => {
+      if (leg.geometry) {
+        const decoded = decodePolyline(leg.geometry)
+        coordinates.push(...decoded)
+      }
+    })
+
+    if (coordinates.length > 0) {
+      map.fitBounds(coordinates, {
+        padding: [30, 30]
+      })
+    }
+  }
+
+  return null
+}
+
+function Map({
+  mapId = 'default-map',
+  selectedRoute = null,
+  routeData = null
+}) {
   const tampines = [1.3547, 103.9437]
   const rafflesPlace = [1.2834, 103.8515]
 
@@ -25,6 +98,17 @@ function Map({ mapId = 'default-map', selectedRoute = null }) {
     [1.2834, 103.8515]
   ]
 
+  let realRoute = []
+
+  if (routeData) {
+    routeData.legs.forEach((leg) => {
+      if (leg.geometry) {
+        const decoded = decodePolyline(leg.geometry)
+        realRoute = [...realRoute, ...decoded]
+      }
+    })
+  }
+
   return (
     <MapContainer
       key={mapId}
@@ -35,6 +119,9 @@ function Map({ mapId = 'default-map', selectedRoute = null }) {
         width: '100%'
       }}
     >
+
+      <FitRoute routeData={routeData} />
+      
       <TileLayer
         attribution="&copy; OpenStreetMap contributors"
         url="https://{s}.tile.openstreetmap.org/{z}/{x}/{y}.png"
@@ -52,24 +139,43 @@ function Map({ mapId = 'default-map', selectedRoute = null }) {
         </Popup>
       </Marker>
 
-      {selectedRoute && (
+      {routeData && (
         <>
-          <Polyline
-            positions={usualRoute}
-            pathOptions={{
-              color: selectedRoute === 'usual' ? 'blue' : 'gray',
-              weight: selectedRoute === 'usual' ? 6 : 3
-            }}
-          />
+          {routeData.legs.map((leg, index) => {
+            if (!leg.geometry) {
+              return null
+            }
 
-          <Polyline
-            positions={alternativeRoute}
-            pathOptions={{
-              color: selectedRoute === 'alternative' ? 'green' : 'gray',
-              weight: selectedRoute === 'alternative' ? 6 : 3,
-              dashArray: '8 8'
-            }}
-          />
+            const legCoordinates = decodePolyline(leg.geometry)
+
+            let lineColor = 'blue'
+            let lineWeight = 5
+            let dashArray = null
+
+            if (leg.mode === 'WALK') {
+              lineColor = 'gray'
+              lineWeight = 4
+              dashArray = '6 8'
+            } else if (leg.mode === 'BUS') {
+              lineColor = 'orange'
+              lineWeight = 5
+            } else if (leg.mode === 'SUBWAY') {
+              lineColor = 'blue'
+              lineWeight = 6
+            }
+
+            return (
+              <Polyline
+                key={index}
+                positions={legCoordinates}
+                pathOptions={{
+                  color: lineColor,
+                  weight: lineWeight,
+                  dashArray
+                }}
+              />
+            )
+          })}
         </>
       )}
 

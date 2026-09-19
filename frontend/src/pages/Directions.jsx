@@ -1,11 +1,19 @@
 import { useState } from 'react'
 import Map from '../components/Map'
+import { getRoute } from '../services/routing'
+import { getLtaAlerts, getLtaCrowding } from '../services/lta'
 
 function Directions() {
   const [from, setFrom] = useState('')
   const [to, setTo] = useState('')
   const [showRoutes, setShowRoutes] = useState(false)
   const [selectedRoute, setSelectedRoute] = useState(null)
+  const [routes, setRoutes] = useState([])
+  const [loading, setLoading] = useState(false)
+  const [error, setError] = useState('')
+  const [arrivalTime, setArrivalTime] = useState('08:45')
+  const [ltaAlerts, setLtaAlerts] = useState([])
+  const [ltaCrowding, setLtaCrowding] = useState({})
 
   function swapLocations() {
     const oldFrom = from
@@ -13,9 +21,109 @@ function Directions() {
     setTo(oldFrom)
   }
 
-  function findRoutes() {
-    setShowRoutes(true)
+  const lineMapping = {
+        DT: 'DTL',
+        NS: 'NSL',
+        EW: 'EWL',
+        CC: 'CCL',
+        NE: 'NEL',
+        TE: 'TEL'
   }
+
+  async function findRoutes() {
+    if (!from || !to) {
+      setError('Please enter both starting point and destination.')
+      return
+    }
+
+    setLoading(true)
+    setError('')
+    setShowRoutes(false)
+    setSelectedRoute(null)
+
+    try {
+      const result = await getRoute(from, to, arrivalTime)
+      const ltaResult = await getLtaAlerts()
+
+      setLtaAlerts(ltaResult.value?.Message || [])
+
+      const trainLines = [
+        ...new Set(
+          result.routes.flatMap((route) =>
+            route.legs
+              .filter((leg) => leg.mode === 'SUBWAY')
+              .map((leg) => lineMapping[leg.routeShortName])
+              .filter(Boolean)
+          )
+        )
+      ]
+
+      const crowdingResults = await Promise.all(
+        trainLines.map(async (trainLine) => {
+          const data = await getLtaCrowding(trainLine)
+
+          return [trainLine, data.value || []]
+        })
+      )
+
+      setLtaCrowding(Object.fromEntries(crowdingResults))
+
+      setRoutes(result.routes)
+      setSelectedRoute(result.routes[0]?.id || null)
+      setShowRoutes(true)
+    } catch (error) {
+      console.error(error)
+      setError('Could not find a route. Please try again.')
+    } finally {
+      setLoading(false)
+    }
+  }
+
+  function getRouteCrowding(route) {
+  const crowdingLevels = route.legs
+    .filter((leg) => leg.mode === 'SUBWAY')
+    .map((leg) => lineMapping[leg.routeShortName])
+    .filter(Boolean)
+    .flatMap((line) => ltaCrowding[line] || [])
+    .map((station) => station.CrowdLevel)
+    .filter((level) => level && level !== 'NA')
+
+  if (crowdingLevels.includes('h')) {
+    return 'high'
+  }
+
+  if (crowdingLevels.includes('m')) {
+    return 'moderate'
+  }
+
+  if (crowdingLevels.includes('l')) {
+    return 'low'
+  }
+
+  return 'unknown'
+}
+
+const routeCrowding = routes.map((route) =>
+  getRouteCrowding(route)
+)
+
+const crowdingRank = {
+  low: 1,
+  moderate: 2,
+  high: 3,
+  unknown: 4
+}
+
+const recommendedRouteIndex = routeCrowding.reduce(
+  (bestIndex, currentLevel, index) => {
+    const bestLevel = routeCrowding[bestIndex]
+
+    return crowdingRank[currentLevel] < crowdingRank[bestLevel]
+      ? index
+      : bestIndex
+  },
+  0
+)
 
   return (
     <div className="directions-page">
@@ -59,7 +167,10 @@ function Directions() {
         <div className="arrival-option">
           <label>Arrival time</label>
 
-          <select defaultValue="08:45">
+          <select
+            value={arrivalTime}
+            onChange={(event) => setArrivalTime(event.target.value)}
+          >
             <option value="08:45">Arrive by 8:45 AM</option>
             <option value="09:00">Arrive by 9:00 AM</option>
             <option value="09:15">Arrive by 9:15 AM</option>
@@ -69,9 +180,16 @@ function Directions() {
         <button
           className="find-route-button"
           onClick={findRoutes}
+          disabled={loading}
         >
-          Find Routes
+          {loading ? 'Finding routes...' : 'Find Routes'}
         </button>
+
+        {error && (
+          <p className="route-error">
+            {error}
+          </p>
+        )}
 
         {showRoutes && (
           <>
@@ -79,72 +197,229 @@ function Directions() {
 
               <h2>Route options</h2>
 
-              <p className="demo-label">
-                Demo data — transport conditions are simulated
-              </p>
-
-              <div
-                className={`route-card ${selectedRoute === 'usual' ? 'selected' : ''}`}
-                onClick={() => setSelectedRoute('usual')}
-              >
-                <div className="route-header">
-                  <strong>Usual Route</strong>
-                  <span>Recommended</span>
-                </div>
-
-                <p>🚇 MRT</p>
-
-                <div className="route-info">
-                  <div>
-                    <strong>42 min</strong>
-                    <small>Travel time</small>
-                  </div>
-
-                  <div>
-                    <strong>High</strong>
-                    <small>Crowding</small>
-                  </div>
-                </div>
-
-                <p className="route-warning">
-                  ⚠️ Possible disruption on route
-                </p>
+              <div className="demo-label">
+                Live LTA service alerts and crowd data
               </div>
 
-              <div
-                className={`route-card ${selectedRoute === 'alternative' ? 'selected' : ''}`}
-                onClick={() => setSelectedRoute('alternative')}
-              >
-                <div className="route-header">
-                  <strong>Alternative Route</strong>
-                  <span>+20 points</span>
-                </div>
+              {routes.map((route, index) => {
+                const crowdingLevels = route.legs
+                  .filter((leg) => leg.mode === 'SUBWAY')
+                  .map((leg) => lineMapping[leg.routeShortName])
+                  .filter(Boolean)
+                  .flatMap((line) => ltaCrowding[line] || [])
+                  .map((station) => station.CrowdLevel)
+                  .filter((level) => level && level !== 'NA')
 
-                <p>🚇 MRT + 🚌 Bus</p>
+                const crowding =
+                  crowdingLevels.includes('h')
+                    ? 'high'
+                    : crowdingLevels.includes('m')
+                      ? 'moderate'
+                      : crowdingLevels.includes('l')
+                        ? 'low'
+                        : 'unknown'
 
-                <div className="route-info">
-                  <div>
-                    <strong>47 min</strong>
-                    <small>Travel time</small>
+                console.log(
+                  'Route stations:',
+                  route.legs
+                    .filter((leg) => leg.mode === 'SUBWAY')
+                    .map((leg) => ({
+                      line: leg.routeShortName,
+                      from: leg.from,
+                      to: leg.to
+                    }))
+                )
+
+                const routeServices = route.legs
+                  .filter((leg) => leg.mode !== 'WALK')
+                  .map((leg) => leg.routeShortName || leg.route)
+                  .filter(Boolean)
+
+                const relevantAlert = ltaAlerts.find((alert) =>
+                  routeServices.some((service) => {
+                    const escapedService = service.replace(
+                      /[.*+?^${}()|[\]\\]/g,
+                      '\\$&'
+                    )
+
+                    const pattern = new RegExp(
+                      `\\b${escapedService}\\b`,
+                      'i'
+                    )
+
+                    return pattern.test(alert.Content)
+                  })
+                )
+
+                const disruption = relevantAlert
+                  ? relevantAlert.Content
+                  : null
+
+                const isRecommended =
+                  index === recommendedRouteIndex
+
+                const rewardPoints =
+                  isRecommended
+                    ? crowding === 'low'
+                      ? 20
+                      : crowding === 'moderate'
+                        ? 10
+                        : 5
+                    : 0
+
+                return (
+                <div
+                  key={route.id}
+                  className={`route-card ${
+                    selectedRoute === route.id ? 'selected' : ''
+                  }`}
+                  onClick={() => setSelectedRoute(route.id)}
+                >
+
+                  <div className="route-status">
+                    {crowding === 'high' ? (
+                      <span className="status-warning">
+                        🔴 High line crowding
+                      </span>
+                    ) : crowding === 'moderate' ? (
+                      <span className="status-warning">
+                        ⚠️ Moderate line crowding
+                      </span>
+                    ) : crowding === 'low' ? (
+                      <span className="status-good">
+                        🟢 Low line crowding
+                      </span>
+                    ) : (
+                      <span>
+                        ⚪ Crowd data unavailable
+                      </span>
+                    )}
                   </div>
 
-                  <div>
-                    <strong>Moderate</strong>
-                    <small>Crowding</small>
-                  </div>
-                </div>
+                  {disruption && (
+                    <div className="route-disruption">
+                      ⚠️ {disruption}
+                    </div>
+                  )}
 
-                <p className="route-benefit">
-                  ✓ Less crowded
-                </p>
-              </div>
+                  <div className="route-header">
+                    <strong>
+                      {index === 0 ? 'Route 1' : `Alternative ${index}`}
+                    </strong>
+
+                    {isRecommended ? (
+                      <span className="recommended-badge">
+                        Recommended
+                      </span>
+                    ) : (
+                      <span>
+                        {route.transfers === 0
+                          ? 'No transfers'
+                          : `${route.transfers} transfer${
+                              route.transfers > 1 ? 's' : ''
+                            }`}
+                      </span>
+                    )}
+                  </div>
+
+                  {isRecommended && (
+                    <p className="route-reason">
+                      ✓ Lowest detected line crowding
+                      {!disruption && ' • No detected service alert'}
+                    </p>
+                  )}
+
+                  {rewardPoints > 0 && (
+                    <div className="route-reward">
+                      🪙 +{rewardPoints} FlowSG points
+                    </div>
+                  )}
+
+                  <p>
+                    🚇{' '}
+                    {route.legs
+                      .filter((leg) => leg.mode !== 'WALK')
+                      .map((leg) => leg.routeShortName || leg.route)
+                      .filter(Boolean)
+                      .join(' + ') || 'Public transport'}
+                  </p>
+                  
+                  <p className="route-time">
+                    🕐 {new Date(route.startTime).toLocaleTimeString([], {
+                      hour: 'numeric',
+                      minute: '2-digit'
+                    })}
+                    {' → '}
+                    {new Date(route.endTime).toLocaleTimeString([], {
+                      hour: 'numeric',
+                      minute: '2-digit'
+                    })}
+                  </p>
+
+                  <div className="route-info">
+                    <div>
+                      <strong>{route.durationMinutes} min</strong>
+                      <small>Travel time</small>
+                    </div>
+
+                    <div>
+                      <strong>{route.walkingDistance} m</strong>
+                      <small>Walking</small>
+                    </div>
+
+                    <div>
+                      <strong>${route.fare}</strong>
+                      <small>Fare</small>
+                    </div>
+                  </div>
+
+                  <p className="route-benefit">
+                    ✓ {route.transfers === 0
+                      ? 'Direct journey'
+                      : `${route.transfers} transfer${
+                          route.transfers > 1 ? 's' : ''
+                        }`}
+                  </p>
+                </div>
+                )
+            })}
 
               {selectedRoute && (
-                <p className="selected-route">
-                  ✓ {selectedRoute === 'usual'
-                    ? 'Usual Route selected'
-                    : 'Alternative Route selected'}
-                </p>
+                <div className="selected-route">
+                  <strong>✓ Route {selectedRoute} selected</strong>
+
+                  {(() => {
+                    const route = routes.find(
+                      (route) => route.id === selectedRoute
+                    )
+
+                    if (!route) return null
+
+                    return (
+                      <div className="journey-breakdown">
+                        <p>
+                          🚶 Walking: {route.walkingMinutes} min
+                        </p>
+
+                        <p>
+                          🚇 Public transport: {route.transitMinutes} min
+                        </p>
+
+                        <p>
+                          ⏳ Waiting: {route.waitingMinutes} min
+                        </p>
+
+                        <p>
+                          🔄 Transfers: {route.transfers}
+                        </p>
+
+                        <p>
+                          💰 Fare: ${route.fare}
+                        </p>
+                      </div>
+                    )
+                  })()}
+                </div>
               )}
 
             </section>
@@ -157,6 +432,7 @@ function Directions() {
                 <Map
                   mapId="directions-map"
                   selectedRoute={selectedRoute}
+                  routeData={routes.find((route) => route.id === selectedRoute)}
                 />
               </div>
             </section>

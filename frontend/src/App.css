@@ -258,3 +258,55 @@ body {
   border-radius: 16px;
   overflow: hidden;
 }
+
+.recommended-badge {
+  padding: 5px 10px;
+  border-radius: 999px;
+  background: #e8f5e9;
+  color: #2e7d32;
+  font-size: 12px;
+  font-weight: 600;
+}
+
+.route-status {
+  margin-bottom: 8px;
+  font-size: 13px;
+  font-weight: 600;
+}
+
+.status-warning {
+  color: #b26a00;
+}
+
+.status-good {
+  color: #2e7d32;
+}
+
+.route-disruption {
+  margin-bottom: 10px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #fff3cd;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.route-reason {
+  margin: 8px 0 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #f0f7f1;
+  color: #2e7d32;
+  font-size: 13px;
+  font-weight: 500;
+}
+
+.route-reward {
+  margin-bottom: 12px;
+  padding: 8px 10px;
+  border-radius: 8px;
+  background: #fff8e1;
+  color: #8a6500;
+  font-size: 13px;
+  font-weight: 600;
+}
